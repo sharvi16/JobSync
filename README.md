@@ -9,7 +9,7 @@
 
 ## 🎯 Key Features  
 
-✅ **AI Resume Analyzer** – Instantly analyzes resumes and suggests **job opportunities from Indeed & LinkedIn** 📄🔍  
+✅ **AI Resume Analyzer** – Instantly analyzes resumes and suggests **job opportunities from Indeed & LinkedIn** 📄
 ✅ **Smart Job Matching** – AI-driven job recommendations based on **skills & interests** 🎯💼  
 ✅ **Course Recommendations** – Personalized upskilling suggestions from **Coursera & Udemy** 📚🚀  
 ✅ **Career Guidance** – Gemini **AI Chatbot** with **100+ FAQs** to answer job & career-related queries 🤖💬  

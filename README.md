@@ -24,7 +24,8 @@
 ![Landing Page](https://res.cloudinary.com/dcf0cpuqf/image/upload/v1738695543/Screenshot_2025-02-02_181936_qpdcqu.png)  
 
 ### 🎥 Walkthrough Video  
-📽️ **Watch the full demo here:** [Demo Video Link](https://res.cloudinary.com/dcf0cpuqf/video/upload/v1738695592/JOBSYNC-LANDING_aopixn.mp4#) *(Replace with actual video link)*  
+📽️ **Watch the full demo here:**  
+[Demo Video Link](https://res.cloudinary.com/dcf0cpuqf/video/upload/v1738695592/JOBSYNC-LANDING_aopixn.mp4)  
 
 ---
 
@@ -66,6 +67,15 @@ node server.js
 
 ### 4️⃣ Open index.html in Your Browser
 
+---
 
 ⭐ Support & Future Plans
 We’re excited to expand JOBSYNC with more features! If you find this useful, drop a ⭐ on this repo and stay tuned for updates! 🚀
+
+---
+
+## Contact
+
+Aditya Agarwal  
+Email: [adityaagarwal0081@gmail.com](mailto:adityaagarwal0081@gmail.com)  
+Portfolio: [https://adityagarwal.netlify.app](https://adityagarwal.netlify.app)

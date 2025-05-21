@@ -8,7 +8,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0D1B2A, #1B263B, #415A77); /* Deep blue modern gradient */
+    background: linear-gradient(135deg, #fc002d, #ff6b00, #ff8534);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,13 +55,13 @@ body::before {
 .glow:nth-child(1) {
     top: 10%;
     left: 10%;
-    background: rgba(255, 105, 180, 0.2); /* Soft pink glow */
+    background: rgba(255, 107, 0, 0.3);
 }
 
 .glow:nth-child(2) {
     bottom: 10%;
     right: 10%;
-    background: rgba(0, 255, 255, 0.2); /* Cool cyan glow */
+    background: rgba(252, 0, 45, 0.3);
 }
 
 @keyframes floatGlow {
@@ -75,7 +75,7 @@ body::before {
 
 
 .container {
-    background-color: #1B2A49; /* Deep modern blue for a rich feel */
+    background-color: #1f1f1f;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Slightly deeper shadow for depth */
     position: relative;
@@ -102,7 +102,7 @@ body::before {
     margin: 15px 0 10px;
 }
 .container button {
-    background: linear-gradient(135deg, #3A3D5B, #4B5975); /* Muted deep blue-gray gradient */
+    background: linear-gradient(135deg, #fc002d, #ff6b00);
     color: #ffffff;
     font-size: 14px;
     padding: 14px 55px;
@@ -138,7 +138,7 @@ body::before {
 
 /* Hover effects */
 .container button:hover {
-    background: linear-gradient(135deg, #4B5975, #3A3D5B);
+    background: linear-gradient(135deg, #ff6b00, #fc002d);
     box-shadow: 0 6px 18px rgba(58, 61, 91, 0.5);
     transform: translateY(-3px);
 }
@@ -155,7 +155,7 @@ body::before {
     border-color: #c7b0b0;
 }
 .container form{
-    background-color: #1B2A49; /* Deep modern blue for a rich feel */
+    background-color: #f9644c; /* Deep modern blue for a rich feel */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -241,7 +241,7 @@ body::before {
     border-radius: 0 150px 100px 0;
 }
 .toggle {
-    background: linear-gradient(to right, #6A85B6, #1E3C72); /* Smooth modern blue gradient */
+    background: linear-gradient(to right, #fc002d, #ff6b00);
     color: #F0F4F8;
     position: relative;
     left: -100%;

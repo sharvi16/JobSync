@@ -9,7 +9,8 @@ document
     const originalText = submitBtn.innerHTML;
 
     // Show loading state
-    submitBtn.innerHTML = "<h3>Sending...</h3>";
+    submitBtn.classList.add("loading");
+    submitBtn.innerHTML = "<h3>Sending</h3>";
     submitBtn.disabled = true;
 
     try {
@@ -43,11 +44,24 @@ document
 
       if (result.success) {
         // Success message
+        submitBtn.classList.remove("loading");
+        submitBtn.classList.add("success");
+        submitBtn.innerHTML = "<h3>Sent</h3>";
+        
         showNotification(
           "Message sent successfully! We'll get back to you soon.",
           "success"
         );
         form.reset();
+        
+        // Reset to normal state after 3 seconds
+        setTimeout(() => {
+          submitBtn.classList.remove("success");
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }, 3000);
+        
+        return;
       } else {
         // Handle rate limiting specifically
         if (result.error === "RATE_LIMIT_EXCEEDED") {
@@ -75,9 +89,12 @@ document
         "error"
       );
     } finally {
-      // Reset button state
-      submitBtn.innerHTML = originalText;
-      submitBtn.disabled = false;
+      // Reset button state (only if not successful)
+      if (!submitBtn.classList.contains("success")) {
+        submitBtn.classList.remove("loading");
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
     }
   });
 

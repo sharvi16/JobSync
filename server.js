@@ -1,14 +1,79 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const path = require("path");
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const corsOptions = {
+           // your backend and prontend urls
+  origin: ["http://localhost:3000"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("."));
+
+// Rate limiting configuration
+const emailRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3, // Limit each IP to 3 email requests per windowMs
+  message: {
+    success: false,
+    message:
+      "Too many email requests from this IP. Please try again in 15 minutes.",
+    error: "RATE_LIMIT_EXCEEDED",
+  },
+  standardHeaders: true, 
+  legacyHeaders: false, 
+  handler: (req, res) => {
+    console.log(
+      `🚨 Email rate limit exceeded for IP: ${
+        req.ip
+      } at ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      success: false,
+      message:
+        "Too many email requests from this IP. Please try again in 15 minutes.",
+      error: "RATE_LIMIT_EXCEEDED",
+      retryAfter: Math.round(15 * 60), // seconds
+    });
+  },
+});
+
+// General rate limiting for all routes
+const generalRateLimit = rateLimit({
+  windowMs: 1 * 60 * 1000, 
+  max: 100, 
+  message: {
+    success: false,
+    message: "Too many requests from this IP. Please try again later.",
+    error: "GENERAL_RATE_LIMIT_EXCEEDED",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    console.log(
+      `⚠️ General rate limit exceeded for IP: ${
+        req.ip
+      } at ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      success: false,
+      message: "Too many requests from this IP. Please try again later.",
+      error: "GENERAL_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Apply general rate limiting to all requests
+app.use(generalRateLimit);
 
 // Serve static files
 app.get("/", (req, res) => {
@@ -28,9 +93,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-// Contact form endpoint
-app.post("/send-email", async (req, res) => {
+// Contact form endpoint with rate limiting
+app.post("/send-email", emailRateLimit, async (req, res) => {
   try {
     const { user_name, user_role, user_email, portfolio_link, message } =
       req.body;
@@ -54,10 +118,10 @@ app.post("/send-email", async (req, res) => {
 
     // Setup email data
     const mailOptions = {
-      from: `"${user_name}" <${process.env.EMAIL_USER}>`, 
-      to: process.env.EMAIL_USER, 
+      from: `"${user_name}" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
       replyTo: user_email,
-      subject: `New Contact Form Submission from ${user_name} - JobSync`, 
+      subject: `New Contact Form Submission from ${user_name} - JobSync`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #fc002d, #ff6b00); padding: 30px; border-radius: 10px; margin-bottom: 20px;">
@@ -152,7 +216,13 @@ app.post("/send-email", async (req, res) => {
     // Send mail with defined transport object
     const info = await transporter.sendMail(mailOptions);
 
-  
+    // Log successful email send
+    console.log(
+      `✅ Email sent successfully to ${
+        process.env.EMAIL_USER
+      } from ${user_email} (${user_name}) at ${new Date().toISOString()}`
+    );
+    console.log(`📧 Message ID: ${info.messageId}`);
 
     res.json({
       success: true,
@@ -168,7 +238,6 @@ app.post("/send-email", async (req, res) => {
     });
   }
 });
-
 
 // Start server
 app.listen(PORT, () => {

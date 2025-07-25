@@ -31,6 +31,14 @@ document
         body: JSON.stringify(formObject),
       });
 
+      // Check if response is ok (status 200-299)
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(
+          errorResult.message || `HTTP error! status: ${response.status}`
+        );
+      }
+
       const result = await response.json();
 
       if (result.success) {
@@ -41,16 +49,29 @@ document
         );
         form.reset();
       } else {
-        // Error message
-        showNotification(
-          result.message || "Failed to send message. Please try again.",
-          "error"
-        );
+        // Handle rate limiting specifically
+        if (result.error === "RATE_LIMIT_EXCEEDED") {
+          showNotification(
+            "You've sent too many messages recently. Please wait 15 minutes before trying again.",
+            "error"
+          );
+        } else if (result.error === "GENERAL_RATE_LIMIT_EXCEEDED") {
+          showNotification(
+            "Too many requests. Please wait a moment before trying again.",
+            "error"
+          );
+        } else {
+          // Other error messages
+          showNotification(
+            result.message || "Failed to send message. Please try again.",
+            "error"
+          );
+        }
       }
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       showNotification(
-        "Network error. Please check your connection and try again.",
+        "Too many email requests. Please try again in 15 minutes.",
         "error"
       );
     } finally {
@@ -131,7 +152,7 @@ function showNotification(message, type = "info") {
     this.style.background = "none";
   };
 
- // animation key frames
+  // animation key frames
   if (!document.querySelector("#notification-styles")) {
     const style = document.createElement("style");
     style.id = "notification-styles";

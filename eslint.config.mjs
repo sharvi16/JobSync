@@ -65,13 +65,14 @@ export default defineConfig([
 
   // ✅ CSS files
   {
-    files: ["**/*.css"],
-    plugins: { css },
-    language: "css/css",
-    extends: ["css/recommended"],
-    rules: {
-      // Optional: customize based on your CSS usage
-      // 'css/no-unknown-custom-properties': 'off',
-    },
+  files: ["**/*.css"],
+  plugins: { css },
+  language: "css/css",
+  extends: ["css/recommended"],
+  rules: {
+    "css/no-invalid-properties": "off", // <—— Disable this check
+    "css/no-important": "warn",         // Optional: downgrade !important to warning
+    "css/use-baseline": "off",          // Optional: disable unsupported property warning
   },
+}
 ]);

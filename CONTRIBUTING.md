@@ -1,4 +1,3 @@
-```markdown
 # 🌟 Contributing to JobSync
 
 Thank you for considering contributing to **JobSync** — an AI-powered job platform built with passion and purpose through GSSoC 2025! 🎉
@@ -34,7 +33,7 @@ Whether you're a beginner taking your first steps in open source or a seasoned d
 # Fork the repository on GitHub, then clone your fork
 git clone https://github.com/your-username/jobsync.git
 cd jobsync
-````
+```
 
 ### 2. Set Up Development Environment
 
@@ -150,7 +149,7 @@ Then create a Pull Request from your fork to the main repository.
 
 ### Commit Message Format
 
-```bash
+```text
 type: brief description
 ```
 
@@ -167,7 +166,7 @@ test: add test for user login validation
 
 ### Branch Naming Convention
 
-```bash
+```text
 feature/description-of-feature
 fix/description-of-fix
 docs/description-of-documentation
@@ -215,7 +214,3 @@ By participating in this project, you agree to abide by our Code of Conduct. Be 
 **Ready to contribute? We can't wait to see what you'll build! 🚀✨**
 
 Thank you for making JobSync better for everyone! 💙
-
-```
-
-

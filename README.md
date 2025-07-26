@@ -1,7 +1,7 @@
 <a id="top"></a>
 # 🚀 JOBSYNC – AI-Powered Job Opportunity Finder
 
-### 🏆 Built at a Hackathon | **Top 5 out of 30+ Teams!**
+## 🏆 Built at a Hackathon | **Top 5 out of 30+ Teams!**
 
 🎯 **AI-driven platform designed to empower job seekers, especially from underprivileged communities, by simplifying the job search process through smart recommendations, mentorship, and skill development programs.**
 
@@ -79,7 +79,7 @@ Visit the live platform: **[https://jobsyncc.netlify.app](https://jobsyncc.netli
 ```bash
 git clone https://github.com/adityagarwal15/JobSync.git
 cd JobSync
-````
+```
 
 #### 2️⃣ Open in Browser
 
@@ -151,7 +151,7 @@ npm start
 
 ## 📁 Project Structure
 
-```
+```text
 jobsync/
 ├── 📁 assets/          # Images, icons, and media files
 ├── 📁 css/             # Stylesheets
@@ -379,4 +379,3 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 [⬆ Back to Top](#top)
 
 </div>
-```

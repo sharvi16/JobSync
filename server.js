@@ -9,10 +9,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-           // your backend and prontend urls
-  origin: ["http://localhost:3000"],
+  origin: [
+    "http://localhost:3000",                       // dev
+    "https://jobsyncc.netlify.app",       // real Netlify site
+  ],
   credentials: true,
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -241,7 +244,7 @@ app.post("/send-email", emailRateLimit, async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+ console.log(`🚀 Server is live!`);
   console.log("📧 Email service is ready!");
 });
 

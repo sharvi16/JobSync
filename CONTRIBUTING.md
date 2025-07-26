@@ -1,4 +1,4 @@
-````markdown
+```markdown
 # 🌟 Contributing to JobSync
 
 Thank you for considering contributing to **JobSync** — an AI-powered job platform built with passion and purpose through GSSoC 2025! 🎉
@@ -218,4 +218,4 @@ Thank you for making JobSync better for everyone! 💙
 
 ```
 
----
+

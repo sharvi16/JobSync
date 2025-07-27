@@ -15,7 +15,10 @@ const PORT = process.env.PORT || 8080;
 // ========== MONGO DB SETUP ==========
 async function main() {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/jobSync');
+   await mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
     console.log("✅ Connected to MongoDB");
   } catch (err) {
     console.error("❌ MongoDB connection error:", err);

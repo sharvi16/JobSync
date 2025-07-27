@@ -46,12 +46,21 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+const MongoStore = require("connect-mongo");
+
 app.use(session({
-  secret: "thisshouldbeabettersecret",
+  secret: process.env.SESSION_SECRET || "fallbackSecret",
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    secure: false, // Set to true if using HTTPS (and behind proxy)
+  },
 }));
+
 
 // === RATE LIMITING ===
 const emailRateLimit = rateLimit({

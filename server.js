@@ -19,12 +19,14 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // ===== MIDDLEWARE =====
 app.use(cors({
-  origin: "https://jobsync-new.onrender.com", // <-- Your frontend Render URL
+  origin: "https://jobsync-new.onrender.com",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
+// Must come after CORS
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 

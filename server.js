@@ -7,14 +7,21 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
-const fetch = require("node-fetch"); // For external API proxy
+const fetch = require("node-fetch");
 const User = require("./models/user.js");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// === TRUST RENDER'S PROXY (for rate limiter and IP) ===
-app.set('trust proxy', 1);
+app.set('trust proxy', 1); // Important for Render
+
+// === Force HTTPS Redirect (for Render) ===
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect('https://' + req.headers.host + req.url);
+  }
+  next();
+});
 
 // === MONGO DB SETUP ===
 mongoose.connect(process.env.MONGODB_URI)
@@ -57,10 +64,10 @@ app.use(session({
   }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: false, // Set to true if using HTTPS (and behind proxy)
+    secure: true, // Set to true for HTTPS
+    sameSite: 'lax',
   },
 }));
-
 
 // === RATE LIMITING ===
 const emailRateLimit = rateLimit({

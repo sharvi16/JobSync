@@ -9,7 +9,7 @@ This file tracks the contributions and points of all contributors based on their
 | S.No | Name              | GitHub Username     | Contribution / Issue(s)                                          | Points | Status |
 |------|-------------------|---------------------|------------------------------------------------------------------|--------|--------|
 | 1    | Rohit Singh       | @rohit-hub07        | [#27](https://github.com/yourusername/yourrepo/issues/27)       | 10     | ✅     |
-| 2    | Shreya M          | @ShreyaM24          | [#112](https://github.com/yourusername/yourrepo/issues/112) - Auth module (signup/login/logout, bcrypt, MongoDB, folder restructure) | 10     | ✅     |
+| 2    | Shreya M          | @ShreyaM24          | [#112](https://github.com/yourusername/yourrepo/issues/112)     | 10     | ✅     |
 | 3    | Bhavy             | @bhavy1204          | [#36](https://github.com/yourusername/yourrepo/issues/36)       | 5      | ✅     |
 | 4    | SM-GIT-HUB        | @SM-GIT-HUB         | [#18](https://github.com/yourusername/yourrepo/issues/18)       | 3      | ✅     |
 | 5    | denshaw-09        | @denshaw-09         | [#24](https://github.com/yourusername/yourrepo/issues/24)       | 3      | ✅     |

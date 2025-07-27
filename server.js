@@ -27,15 +27,12 @@ async function main() {
 main();
 
 // ========== MIDDLEWARE ==========
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://jobsyncc.netlify.app"
-  ],
-  credentials: true,
-};
+app.use(cors({
+  origin: "https://jobsyncc.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));

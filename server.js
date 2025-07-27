@@ -7,34 +7,38 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+const fetch = require("node-fetch"); // For external API proxy
 const User = require("./models/user.js");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// ===== MONGO DB SETUP =====
+// === TRUST RENDER'S PROXY (for rate limiter and IP) ===
+app.set('trust proxy', 1);
+
+// === MONGO DB SETUP ===
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ===== CORS SETUP =====
+// === CORS SETUP ===
 const allowedOrigins = [
   "https://jobsync-new.onrender.com",
-  "http://localhost:3000", // for local testing
+  "http://localhost:3000"
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS not allowed for this origin: " + origin));
+      callback(new Error("CORS not allowed for origin: " + origin));
     }
   },
   credentials: true,
 }));
 
-// ===== MIDDLEWARE =====
+// === MIDDLEWARE ===
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -42,20 +46,19 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// ===== SESSION =====
 app.use(session({
   secret: "thisshouldbeabettersecret",
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set to true only if using HTTPS with SameSite=None
+  cookie: { secure: false }
 }));
 
-// ===== RATE LIMITING =====
+// === RATE LIMITING ===
 const emailRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   handler: (req, res) => {
-    res.status(429).json({ success: false, message: "Too many email requests. Try again in 15 minutes." });
+    res.status(429).json({ success: false, message: "Too many email requests. Try again later." });
   },
 });
 
@@ -69,7 +72,7 @@ const generalRateLimit = rateLimit({
 
 app.use(generalRateLimit);
 
-// ===== ROUTES =====
+// === ROUTES ===
 app.get("/", (req, res) => res.render("index.ejs"));
 app.get("/login", (req, res) => res.render("login.ejs"));
 app.get("/signup", (req, res) => res.render("signup.ejs"));
@@ -115,7 +118,19 @@ app.get("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/"));
 });
 
-// ===== EMAIL HANDLER =====
+// === PROXY EXTERNAL API TO BYPASS CORS ===
+app.get("/api/totalusers", async (req, res) => {
+  try {
+    const response = await fetch("https://sc.ecombullet.com/api/dashboard/totalusers");
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error("❌ External API fetch failed:", err);
+    res.status(500).json({ error: "Failed to fetch external data" });
+  }
+});
+
+// === EMAIL HANDLER ===
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -162,7 +177,7 @@ app.post("/send-email", emailRateLimit, async (req, res) => {
   }
 });
 
-// ===== START SERVER =====
+// === START SERVER ===
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

@@ -17,16 +17,25 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ===== MIDDLEWARE =====
+// ===== CORS SETUP =====
+const allowedOrigins = [
+  "https://jobsync-new.onrender.com",
+  "http://localhost:3000", // for local testing
+];
+
 app.use(cors({
-  origin: "https://jobsync-new.onrender.com",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed for this origin: " + origin));
+    }
+  },
   credentials: true,
 }));
 
-// Must come after CORS
+// ===== MIDDLEWARE =====
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -38,7 +47,7 @@ app.use(session({
   secret: "thisshouldbeabettersecret",
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // true if using HTTPS
+  cookie: { secure: false } // Set to true only if using HTTPS with SameSite=None
 }));
 
 // ===== RATE LIMITING =====
@@ -46,10 +55,7 @@ const emailRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   handler: (req, res) => {
-    res.status(429).json({
-      success: false,
-      message: "Too many email requests. Try again in 15 minutes.",
-    });
+    res.status(429).json({ success: false, message: "Too many email requests. Try again in 15 minutes." });
   },
 });
 
@@ -57,10 +63,7 @@ const generalRateLimit = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
   handler: (req, res) => {
-    res.status(429).json({
-      success: false,
-      message: "Too many requests. Please try again shortly.",
-    });
+    res.status(429).json({ success: false, message: "Too many requests. Please try again shortly." });
   },
 });
 

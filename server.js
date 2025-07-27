@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ========== MONGO DB SETUP ==========
-async function main() {
+async function main() { 
   try {
    await mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

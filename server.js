@@ -19,8 +19,9 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // ===== MIDDLEWARE =====
 app.use(cors({
-  origin: true, // allow same origin
+  origin: "https://jobsync-new.onrender.com", // <-- Your frontend Render URL
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
 app.use(express.json());
@@ -30,13 +31,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// ===== SESSION =====
 app.use(session({
   secret: "thisshouldbeabettersecret",
   resave: false,
   saveUninitialized: true,
-  cookie: {
-    secure: false, // change to true if HTTPS forced
-  }
+  cookie: { secure: false } // true if using HTTPS
 }));
 
 // ===== RATE LIMITING =====
@@ -107,12 +107,10 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.redirect("/");
-  });
+  req.session.destroy(() => res.redirect("/"));
 });
 
-// ===== EMAIL =====
+// ===== EMAIL HANDLER =====
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,

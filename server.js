@@ -9,6 +9,7 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const fetch = require("node-fetch");
 const User = require("./models/user.js");
+const Contact = require("./models/contact.js")
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -150,7 +151,7 @@ app.get("/api/totalusers", async (req, res) => {
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_SECURE === 'true',
+  secure: true,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -161,35 +162,54 @@ const transporter = nodemailer.createTransport({
 app.post("/send-email", emailRateLimit, async (req, res) => {
   const { user_name, user_role, user_email, portfolio_link, message } = req.body;
 
-  if (!user_name || !user_role || !user_email || !message) {
-    return res.status(400).json({ success: false, message: "All required fields must be filled." });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(user_email)) {
-    return res.status(400).json({ success: false, message: "Invalid email address." });
-  }
-
-  const mailOptions = {
-    from: `"${user_name}" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_USER,
-    replyTo: user_email,
-    subject: `New Contact Form Submission from ${user_name} - JobSync`,
-    html: `<p><strong>Name:</strong> ${user_name}<br>
-           <strong>Role:</strong> ${user_role}<br>
-           <strong>Email:</strong> ${user_email}<br>
-           <strong>Portfolio:</strong> ${portfolio_link || "Not provided"}<br><br>
-           <strong>Message:</strong><br>${message.replace(/\n/g, "<br>")}</p>`,
-    text: `Name: ${user_name}\nRole: ${user_role}\nEmail: ${user_email}\nPortfolio: ${portfolio_link}\n\nMessage:\n${message}`,
-  };
-
   try {
+    if (!user_name || !user_role || !user_email || !message) {
+      return res.status(400).json({ success: false, message: "All required fields must be filled." });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(user_email)) {
+      return res.status(400).json({ success: false, message: "Invalid email address." });
+    }
+
+    // Save to DB
+    await Contact.create({
+      userName: user_name,
+      userRole: user_role,
+      userEmail: user_email,
+      portfolioLink: portfolio_link,
+      message,
+    });
+
+
+    const mailOptions = {
+      from: `"${user_name}" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      replyTo: user_email,
+      subject: `New Contact Form Submission from ${user_name} - JobSync`,
+      html: `<p><strong>Name:</strong> ${user_name}<br>
+             <strong>Role:</strong> ${user_role}<br>
+             <strong>Email:</strong> ${user_email}<br>
+             <strong>Portfolio:</strong> ${portfolio_link || "Not provided"}<br><br>
+             <strong>Message:</strong><br>${message.replace(/\n/g, "<br>")}</p>`,
+      text: `Name: ${user_name}\nRole: ${user_role}\nEmail: ${user_email}\nPortfolio: ${portfolio_link}\n\nMessage:\n${message}`,
+    };
+
+    // Send email
     const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent: ${info.messageId}`);
-    res.json({ success: true, message: "Email sent successfully!", messageId: info.messageId });
+    console.log(`Email sent: ${info.messageId}`);
+
+    return res.status(201).json({
+      success: true,
+      message: "Contact form submitted and email sent successfully.",
+      messageId: info.messageId,
+    });
   } catch (error) {
-    console.error("❌ Email error:", error);
-    res.status(500).json({ success: false, message: "Email sending failed." });
+    console.error("Error in contact form submission:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Something went wrong: ${error.message}`,
+    });
   }
 });
 

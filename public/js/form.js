@@ -24,13 +24,14 @@ document
       }
 
       // Send data to server
-      const response = await fetch("https://jobsync-3cn2.onrender.com/send-email", {
+      const response = await fetch("/send-email", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify(formObject),
 });
+
 
 
       // Check if response is ok (status 200-299)

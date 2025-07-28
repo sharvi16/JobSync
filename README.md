@@ -40,6 +40,9 @@ Visit the live platform: **[jobsync-new.onrender.com](jobsync-new.onrender.com)*
 - 📱 **Multi-page Layout**: Home, Jobs, Login, Profile pages
 - 🔍 **Job Listings Interface**: Card-based job display with filtering UI
 - 📱 **Mobile Responsive**: Works across all device sizes
+- 🔐 **User Authentication**: Signup, login, session-based access control
+- 🛢️ **Database Integration**: MongoDB used to store users securely
+- 📧 **Email Notifications:** Sends email !!!!!!
 
 ### 🚧 **Planned Features (Need Contributors!)**
 
@@ -54,10 +57,9 @@ Visit the live platform: **[jobsync-new.onrender.com](jobsync-new.onrender.com)*
 - **Search Functionality**: Smart job search with filters
 
 #### 🛠️ Backend Development
-- **User Authentication**: Secure login/signup system
 - **Profile Management**: User profiles with skills and preferences
 - **Job Application Tracking**: Monitor application status
-- **Database Integration**: Store users, jobs, and applications
+- **Database Integration** *(partially implemented)*: Currently storing user emails and passwords, will expand to include profiles, job listings, applications etc.
 
 #### 📊 Analytics & Insights
 - **Application Tracking**: Monitor job application journey
@@ -69,11 +71,13 @@ Visit the live platform: **[jobsync-new.onrender.com](jobsync-new.onrender.com)*
 ## 🏁 Getting Started
 
 ### Prerequisites
+- Basic knowledge of:
+- HTML, CSS, JavaScript *(for frontend contributions)* & Express.js & MongoDB *(for backend contributions)*
+- Node.js (v14+)
+- MongoDB Atlas or local MongoDB instance
 - A modern web browser
-- Basic knowledge of HTML, CSS, JavaScript (for frontend contributions)
-- Node.js (v14+) - *for future backend development*
 
-### 🛠️ Current Setup (Frontend Only)
+### 🛠️ Current Setup
 
 #### 1️⃣ Clone the Repository
 ```bash
@@ -81,59 +85,49 @@ git clone https://github.com/adityagarwal15/JobSync.git
 cd JobSync
 ```
 
-#### 2️⃣ Open in Browser
-
-Simply open `index.html` in your web browser to see the current frontend!
-
+#### 2️⃣ Install dependencies
 ```bash
-# Or use a local server (recommended)
-npx http-server
-# Then visit http://localhost:8080
-```
-
-#### 3️⃣ Explore the Pages
-
-* 🏠 **Homepage**: `index.html` - Main landing page
-* 💼 **Jobs Page**: `job.html` - Job listings interface
-* 👤 **Login Page**: `login.html` - Authentication UI
-* 📋 **Profile Page**: `profile.html` - User profile interface
-
-### 🚀 Future Backend Setup
-
-*Once backend is implemented by contributors:*
-
-```bash
-# Install dependencies
 npm install
-
-# Set up environment variables
-cp .env.example .env
-
-# Start the server
-npm start
 ```
 
+#### 3️⃣ Set Up Environment Variables
+- Create a .env file in the root directory and add the following:
+```bash
+MONGODB_URI=your_mongodb_connection_string
+SESSION_SECRET=your_session_secret
+```
+### 4️⃣ Run the Project
+```bash
+# Option 1: Start normally
+node server.js
+
+# Option 2: Use nodemon for development (auto-restarts on changes)
+npx nodemon server.js
+```
 ---
 
 ## 🧑‍💻 Tech Stack
 
 ### ✅ **Currently Used**
-
+* 🌐 **Frontend**:
 * **HTML5**: Semantic markup and structure
 * **CSS3**: Modern styling with custom properties
 * **JavaScript ES6+**: Interactive functionality
+* **EJS**: Templating engine for rendering dynamic content on the server
 * **GSAP**: Professional animations and transitions
-* **Lenis**: Smooth scrolling experience *(if implemented)*
-* **ScrollTrigger**: Scroll-based animations *(if implemented)*
+* **Lenis**: Smooth scrolling experience
+* **ScrollTrigger**: Scroll-based animations
+
+* 🧠 **Backend**
+* **Node.js**: JavaScript runtime for server-side operations
+* **Express.js**: Lightweight web framework for routing and APIs
+* **MongoDB**: NoSQL database for storing user credentials and data
+* **Mongoose**: Object modeling for MongoDB
+* **bcrypt**: Password hashing for secure authentication
+* **express-session**: Session management for persistent login
+* **dotenv**: Environment variable handling for secure configuration
 
 ### 🚧 **Planned Technologies (Contributors Needed)**
-
-#### Backend
-
-* **Node.js**: Server-side JavaScript runtime
-* **Express.js**: Web application framework
-* **MongoDB Atlas**: Cloud-based NoSQL database
-* **Mongoose**: MongoDB object modeling
 
 #### AI & Data
 
@@ -144,36 +138,76 @@ npm start
 #### Authentication & Security
 
 * **JWT**: JSON Web Tokens for authentication
-* **bcrypt**: Password hashing
-* **CORS**: Cross-origin resource sharing
+* **bcrypt**: Password hashing *(implemented)*
+* **express-session**: Session-based login *(implemented)*
 
 ---
 
 ## 📁 Project Structure
 
 ```text
-jobsync/
-├── 📁 assets/          # Images, icons, and media files
-├── 📁 css/             # Stylesheets
-│   └── hero.css        # Homepage styles
-├── 📁 js/              # JavaScript files
-├── 📄 index.html       # Homepage
-├── 📄 job.html         # Jobs listing page
-├── 📄 login.html       # Authentication page
-├── 📄 profile.html     # User profile page
-├── 📄 README.md        # Project documentation
-├── 📄 CONTRIBUTING.md  # Contribution guidelines
-├── 📄 CODE_OF_CONDUCT.md
-└── 📄 LICENSE
+📁 JobSync/
+├── 📄 .env                  – Environment variables
+├── 📄 .gitignore            – Git ignored files
+├── 📄 .prettierrc           – Prettier config
+├── 📄 CODE_OF_CONDUCT.md    – Contributor conduct guide
+├── 📄 CONTRIBUTING.md       – Contribution guidelines
+├── 📄 LICENSE               – Project license
+├── 📄 eslint.config.mjs     – ESLint configuration
+├── 📄 package.json          – Project dependencies & scripts
+├── 📄 package-lock.json     – Dependency lock file
+├── 📄 README.md             – Project documentation
+├── 🧠 server.js             – Express server entry point
 
-🚧 Future Backend Structure (Contributors Welcome!):
-├── 📁 server/          # Backend code
-│   ├── 📁 routes/      # API routes
-│   ├── 📁 models/      # Database models
-│   ├── 📁 controllers/ # Route controllers
-│   └── 📄 server.js    # Main server file
-├── 📁 config/          # Configuration files
-└── 📄 package.json     # Dependencies
+📁 views/                    – 🌐 EJS templates for dynamic pages
+│   ├── 🏠 index.ejs
+│   ├── 🔐 login.ejs
+│   ├── 👤 profile.ejs
+│   ├── 📝 signup.ejs
+│   └── 📄 user.ejs
+
+📁 public/                   – 🌟 Frontend static assets
+│
+├── 📁 js/                   – 💡 JavaScript for interactivity
+│   ├── 🔧 about.js
+│   ├── 🧾 form.js
+│   ├── 💼 job.js
+│   ├── 🎢 lenis.js
+│   ├── ⏳ loader.js
+│   ├── 🔐 login.js
+│   ├── 📱 menu.js
+│   ├── 💰 prices.js
+│   ├── 👤 profile.js
+│   ├── 📊 projects.js
+│   └── 🎯 scroll-test.js
+│
+├── 📁 css/                  – 🎨 Styling for each component/page
+│   ├── 🧭 about.css
+│   ├── ✨ features.css
+│   ├── 🦶 footer.css
+│   ├── 📦 global.css
+│   ├── 🚀 hero.css
+│   ├── 💼 job.css
+│   ├── ⏳ loader.css
+│   ├── 🔐 login.css
+│   ├── 📱 menu.css
+│   ├── 🧭 nav.css
+│   ├── 💰 prices.css
+│   ├── 🏞️ prices-hero.css
+│   ├── 👤 profile.css
+│   ├── 📊 projects.css
+│   ├── 🧲 promo.css
+│   ├── 🛠️ services.css
+│   └── 📝 signup.css
+│
+└── 📁 assets/               – 🖼️ Images & icons
+    ├── 🖼️ feature-1.png
+    ├── 🖼️ feature-2.png
+    ├── ...
+    └── 🚀 site-logo.png
+
+📁 node_modules/             – 📦 Installed dependencies
+
 ```
 
 ---
@@ -203,7 +237,6 @@ jobsync/
 #### ⚙️ **Backend Development** *(Intermediate)*
 
 * 🏗️ **API Development**: Create RESTful APIs for jobs, users, applications
-* 🗄️ **Database Setup**: MongoDB models for users, jobs, applications
 * 🔐 **Authentication**: JWT-based login/signup system
 * 🔍 **Search Functionality**: Advanced job search with filters
 
@@ -216,7 +249,6 @@ jobsync/
 
 #### 🛠️ **DevOps & Infrastructure**
 
-* 🚀 **Deployment Setup**: Backend hosting and CI/CD
 * 🧪 **Testing**: Unit tests and integration tests
 * 📝 **Documentation**: API docs, code comments
 * 🔧 **Performance**: Optimization and caching
@@ -295,11 +327,8 @@ Thanks goes to these wonderful people who have made JobSync better:
 * ✅ Responsive design across pages
 * ✅ Basic job listings UI
 
-### Phase 2: Backend Development *(Contributors Needed)*
+### Phase 2: Backend Development *(Partially done - Contributors Needed)*
 
-* 🔄 Node.js/Express.js server setup
-* 🔄 MongoDB database integration
-* 🔄 User authentication system
 * 🔄 Basic API endpoints (users, jobs)
 
 ### Phase 3: Core Features *(Contributors Needed)*

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Page Not Found</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      padding: 20px;
+    }
+
+  h1 {
+  font-size: 8rem;
+  margin: 0;
+  background: linear-gradient(135deg, #fc002d, #ff6b00, #ff8534);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+   background: linear-gradient(135deg, #fc002d, #ff6b00, #ff8534);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #bbb; /* Keep this gray for contrast, or you can use similar gradient if needed */
+}
+
+
+    .btn {
+      background: linear-gradient(135deg, #fc002d, #ff6b00, #ff8534);
+      color: #fff;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      cursor: pointer;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.3);
+      
+    }
+
+    .floating-icon {
+      font-size: 5rem;
+      opacity: 0.15;
+      position: absolute;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .floating-icon:nth-child(1) { top: 10%; left: 15%; }
+    .floating-icon:nth-child(2) { top: 30%; right: 10%; animation-delay: 2s; }
+    .floating-icon:nth-child(3) { bottom: 20%; left: 30%; animation-delay: 1s; }
+    .floating-icon:nth-child(4) { bottom: 10%; right: 25%; animation-delay: 3s; }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Background Icons -->
+  <div class="floating-icon">🔍</div>
+  <div class="floating-icon">💼</div>
+  <div class="floating-icon">📄</div>
+  <div class="floating-icon">💻</div>
+
+  <div class="container">
+  <h1 id="error-title">404</h1>
+    <h2 id="error-subtitle">Oops! Page not found.</h2>
+    <p id="error-message">The page you're looking for might have been moved, deleted, or never existed.</p>
+
+    <a href="/" class="btn" id="home-button">Go to Home</a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    gsap.from("#error-title", { opacity: 0, scale: 0.3, duration: 1, ease: "back.out(1.7)" });
+    gsap.from("#error-subtitle", { y: 40, opacity: 0, delay: 0.4, duration: 1, ease: "power3.out" });
+    gsap.from("#error-message", { y: 40, opacity: 0, delay: 0.6, duration: 1, ease: "power3.out" });
+    gsap.from("#home-button", { y: 20, opacity: 0, delay: 1.2, duration: 0.8, ease: "power2.out" });
+  </script>
+</body>
+</html>

@@ -93,12 +93,13 @@ const verificationController = async (req, res) => {
       expiresIn: '24h',
     });
 
-    res.cookie('token', tkn, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+  res.cookie('token', tkn, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
 
     req.flash('success', 'Email verified successfully! Welcome to JobSync.');
     res.redirect('/');
@@ -139,12 +140,14 @@ const loginController = async (req, res) => {
       expiresIn: '24h',
     });
 
-    res.cookie('token', tkn, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+  res.cookie('token', tkn, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
+
 
     req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/');
@@ -158,11 +161,11 @@ const loginController = async (req, res) => {
 const logoutController = async (req, res) => {
   try {
     res.cookie('token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 0,
-    });
+  httpOnly: true,
+  secure: true,
+  sameSite: 'None',
+  maxAge: 0, // expire cookie
+});
 
     req.flash('info', 'You have been logged out successfully.');
     res.redirect('/');

@@ -3,7 +3,7 @@
 
 ## 🏆 Built at a Hackathon | **Top 5 out of 30+ Teams!**
 
-🎯 **AI-driven platform designed to empower job seekers, especially from underprivileged communities, by simplifying the job search process through smart recommendations, mentorship, and skill development programs.**
+🎯 **AI-driven platform designed to empower job seekers, especially from underprivileged communities, by simplifying the job search process through smart recommendations, mentorship, and skill development programs**
 
 ![License](https://img.shields.io/github/license/adityagarwal15/JobSync)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)

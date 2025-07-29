@@ -89,7 +89,7 @@ const verificationController = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.SECRET, {
+    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '24h',
     });
 
@@ -136,7 +136,7 @@ const loginController = async (req, res) => {
       return res.redirect('/login');
     }
 
-    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.SECRET, {
+    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '24h',
     });
 

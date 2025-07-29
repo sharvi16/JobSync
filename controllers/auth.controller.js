@@ -49,6 +49,7 @@ const registerUserController = async (req, res) => {
     });
 
     console.log('SMTP: ', process.env.SMTP_USER);
+    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
     const mailOptions = {
       from: `JobSync ${process.env.SMTP_SENDER}`,
       to: newUser.email,
@@ -226,6 +227,7 @@ const forgetPasswordController = async (req, res) => {
       },
     });
 
+    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
     const mailOptions = {
       from: `JobSync ${process.env.SMTP_SENDER}`,
       to: user.email,
@@ -318,6 +320,7 @@ const resendVerificationController = async (req, res) => {
       },
     });
 
+    console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
     const mailOptions = {
       from: `JobSync ${process.env.SMTP_SENDER}`,
       to: user.email,

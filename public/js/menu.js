@@ -74,14 +74,4 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   menuToggleBtn.addEventListener("click", toggleMenu);
-
-  // Close when clicking outside the menu
-  document.addEventListener("click", function (event) {
-    const isClickOnToggle = menuToggleBtn.contains(event.target);
-    const isClickInsideMenu = event.target.closest(".menu-items");
-
-    if (!isClickInsideMenu && !isClickOnToggle && isMenuOpen) {
-      toggleMenu();
-    }
-  });
 });

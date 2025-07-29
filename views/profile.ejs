@@ -335,7 +335,7 @@
     <div class="profile-container">
         <div class="profile-header">
             <div class="back-button">
-                <a href="/">
+                <a href="/" onclick="handleBackToHome(event)">
                     <i class="fas fa-arrow-left"></i> Back to Home Page
                 </a>
             </div>
@@ -415,6 +415,38 @@
                 setTimeout(() => msg.remove(), 300);
             });
         }, 5000);
+
+        // Handle back to home navigation without page reload
+        function handleBackToHome(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Check if user came from within the same domain
+            const referrer = document.referrer;
+            const currentDomain = window.location.origin;
+
+            // If user came from the same domain and has history, go back
+            if (referrer && referrer.startsWith(currentDomain) && window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Navigate to home page immediately
+                window.location.href = '/';
+            }
+        }
+
+        // Add smooth page entry animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.querySelector('.profile-container');
+            if (container) {
+                container.style.transform = 'translateY(30px)';
+                container.style.opacity = '0';
+                container.style.transition = 'all 0.5s ease';
+
+                setTimeout(() => {
+                    container.style.transform = 'translateY(0)';
+                    container.style.opacity = '1';
+                }, 100);
+            }
+        });
     </script>
 </body>
 

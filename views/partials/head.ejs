@@ -1,0 +1,29 @@
+<!-- views/partials/head.ejs -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || "JobSync" %></title>
+  <meta name="author" content="JobSync" />
+  <meta name="description" content="AI-powered job search and real-time mentorship platform for daily wage workers and job seekers." />
+  <meta name="keywords" content="JobSync, job portal, AI job finder, mentorship, job matching, daily wage work, employment, smart job search" />
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/logo/favicon.png" />
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Druk+Wide+Trial&family=PP+Object+Sans&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnH1zC+XrJDbGoQ+9jwuyTvwNUxHd2Z7CplDChFJ0vP4Uc3UOAl9W+7dhTT4GAVM3Qn4m5ytg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="/css/global.css" />
+
+  <!-- Page-specific stylesheet (optional, override in pages if needed) -->
+  <% if (typeof pageStyles !== 'undefined') { %>
+    <link rel="stylesheet" href="/css/<%= pageStyles %>.css" />
+  <% } %>
+</head>

@@ -8,8 +8,8 @@ This file tracks the contributions and points of all contributors based on their
 
 | S.No | Name              | GitHub Username     | Contribution / Issue(s)                                          | Points | Status |
 |------|-------------------|---------------------|------------------------------------------------------------------|--------|--------|
-| 1    | Rohit Singh       | @rohit-hub07        | [#27](https://github.com/yourusername/yourrepo/issues/27)       | 10     | ✅     |
-| 2    | Shreya M          | @ShreyaM24          | [#112](https://github.com/yourusername/yourrepo/issues/112)     | 10     | ✅     |
+| 1    | Rohit Singh       | @rohit-hub07        | [#27](https://github.com/adityagarwal15/JobSync/issues/27)       | 10     | ✅     |
+| 2    | Shreya M          | @ShreyaM24          | [#112](https://github.com/adityagarwal15/JobSync/issues/112)     | 10     | ✅     |
 | 3    | Bhavy             | @bhavy1204          | [#36](https://github.com/yourusername/yourrepo/issues/36)       | 5      | ✅     |
 | 4    | SM-GIT-HUB        | @SM-GIT-HUB         | [#18](https://github.com/yourusername/yourrepo/issues/18)       | 3      | ✅     |
 | 5    | denshaw-09        | @denshaw-09         | [#24](https://github.com/yourusername/yourrepo/issues/24)       | 3      | ✅     |
@@ -43,7 +43,7 @@ This file tracks the contributions and points of all contributors based on their
 
 ## 🎯 How to Contribute
 
-1. Check our [Issues](https://github.com/yourusername/yourrepo/issues) for open tasks
+1. Check our [Issues](https://github.com/adityagarwal15/JobSync/issues) for open tasks
 2. Comment on an issue to get it assigned
 3. Submit a quality PR with proper documentation
 4. Get your contribution merged and earn points!

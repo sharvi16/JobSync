@@ -1,35 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('partials/head', { title: 'Profile | JobSync', pageStyles: 'profile' }) %>
 
-  <!-- Local-only fonts and GSAP for this page -->
-  <head>
-    <link href="https://fonts.googleapis.com/css2?family=PP+Object+Sans:wght@400;600&family=Druk+Wide+Trial:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - JobSync</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Removed profile.css to prevent conflicts -->
+    <style>
+        /* Maintain the reddish color scheme with modern styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff6a6a 0%, #cc2929 100%) !important;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: white !important;
+        }
+
+        .profile-container {
+            background: rgba(0, 0, 0, 0.75) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            opacity: 1 !important;
+            transform: none !important;
+            color: white !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Strong overrides for all text elements */
+        .profile-container * {
+            color: white !important;
+        }
+
+        .profile-container h1,
+        .profile-container h2,
+        .profile-container h3,
+        .profile-container p,
+        .profile-container span,
+        .profile-container a {
+            color: white !important;
+        }
+
+        /* Profile specific text colors with high specificity */
+        .profile-container .profile-header h1 {
+            color: white !important;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .profile-container .back-button a {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .profile-container .back-button a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white !important;
+        }
+
+        .profile-container .profile-details h2 {
+            color: #f2f2f2 !important;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .profile-container .profile-details p {
+            color: rgba(255, 255, 255, 0.9) !important;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-container .profile-details i {
+            color: #ffa726 !important;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .profile-container .profile-avatar i {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-size: 4rem;
+        }
+
+        .profile-container .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        /* Verification status styling */
+        .profile-container .verification-status h3 {
+            color: white !important;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-container .verification-status p {
+            color: white !important;
+            margin-bottom: 1rem;
+        }
+
+        .profile-container .profile-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .profile-container .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white !important;
+        }
+
+        .profile-container .action-btn.primary {
+            background: #007bff !important;
+            color: white !important;
+        }
+
+        .profile-container .action-btn.primary:hover {
+            background: #0056b3 !important;
+            transform: translateY(-2px);
+        }
+
+        .profile-container .action-btn.danger {
+            background: #dc3545 !important;
+            color: white !important;
+        }
+
+        .profile-container .action-btn.danger:hover {
+            background: #c82333 !important;
+            transform: translateY(-2px);
+        }
+
+        .profile-container .resend-btn {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .profile-container .resend-btn:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .flash-message {
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .flash-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .flash-error {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+        }
+
+        .flash-warning {
+            background: linear-gradient(45deg, #ffc107, #f39c12);
+        }
+
+        .flash-info {
+            background: linear-gradient(45deg, #17a2b8, #3498db);
+        }
+
+        .verification-status {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .verified {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .not-verified {
+            background: linear-gradient(45deg, #ffc107, #f39c12);
+            color: white;
+        }
+
+        .resend-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .resend-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .profile-details h2 {
+                font-size: 1.5rem;
+            }
+
+            .profile-details p {
+                font-size: 1rem;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
 
 <body>
-  <div class="profile-container">
-    <header>
-      <h1>My Profile</h1>
-      <button id="logout-btn">Logout</button>
-    </header>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        <% if (typeof success !=='undefined' && success && success.length> 0) { %>
+            <% success.forEach(function(msg) { %>
+                <div class="flash-message flash-success">
+                    <i class="fas fa-check-circle"></i>
+                    <%= msg %>
+                </div>
+                <% }); %>
+                    <% } %>
 
-    <section class="profile-details">
-      <h2>Welcome, <span id="username">User</span></h2>
-      <p>Email: <span id="email">example@example.com</span></p>
-    </section>
+                        <% if (typeof error !=='undefined' && error && error.length> 0) { %>
+                            <% error.forEach(function(msg) { %>
+                                <div class="flash-message flash-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <%= msg %>
+                                </div>
+                                <% }); %>
+                                    <% } %>
 
-    <section class="resume-section">
-      <h2>Uploaded Resume</h2>
-      <div id="resume-placeholder">
-        <p>No resume uploaded.</p>
-      </div>
-      <input type="file" id="resume-upload" accept=".pdf" />
-      <button id="upload-btn">Upload Resume</button>
-    </section>
-  </div>
+                                        <% if (typeof warning !=='undefined' && warning && warning.length> 0) { %>
+                                            <% warning.forEach(function(msg) { %>
+                                                <div class="flash-message flash-warning">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                    <%= msg %>
+                                                </div>
+                                                <% }); %>
+                                                    <% } %>
 
-  <script src="/js/profile.js"></script>
+                                                        <% if (typeof info !=='undefined' && info && info.length> 0) {
+                                                            %>
+                                                            <% info.forEach(function(msg) { %>
+                                                                <div class="flash-message flash-info">
+                                                                    <i class="fas fa-info-circle"></i>
+                                                                    <%= msg %>
+                                                                </div>
+                                                                <% }); %>
+                                                                    <% } %>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="back-button">
+                <a href="/" onclick="handleBackToHome(event)">
+                    <i class="fas fa-arrow-left"></i> Back to Home Page
+                </a>
+            </div>
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+        </div>
+
+        <div class="profile-content">
+            <% if (typeof user !=='undefined' && user) { %>
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+
+                    <div class="profile-details">
+                        <h2>
+                            <%= user.name || 'Unknown User' %>
+                        </h2>
+                        <p><i class="fas fa-envelope"></i>
+                            <%= user.email || 'No email provided' %>
+                        </p>
+                        <p><i class="fas fa-user-tag"></i>
+                            <%= user.role==='admin' ? 'Employer' : 'Job Seeker' %>
+                        </p>
+                        <p><i class="fas fa-calendar"></i> Member since
+                            <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown' %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="verification-status <%= user.isVerified ? 'verified' : 'not-verified' %>">
+                    <% if (user.isVerified) { %>
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Email Verified</h3>
+                        <p>Your email address has been successfully verified.</p>
+                        <% } else { %>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Email Not Verified</h3>
+                            <p>Please verify your email address to access all features.</p>
+                            <form action="/resend-verification" method="POST" style="display: inline;">
+                                <button type="submit" class="resend-btn">
+                                    <i class="fas fa-paper-plane"></i> Resend Verification Email
+                                </button>
+                            </form>
+                            <% } %>
+                </div>
+                <% } else { %>
+                    <div class="profile-info">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-details">
+                            <h2>User data not available</h2>
+                            <p>Please try refreshing the page or logging in again.</p>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <div class="profile-actions">
+                            <a href="/dashboard" class="action-btn primary">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <form action="/logout" method="POST" style="display: inline;">
+                                <button type="submit" class="action-btn danger">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(msg => {
+                msg.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => msg.remove(), 300);
+            });
+        }, 5000);
+
+        // Handle back to home navigation without page reload
+        function handleBackToHome(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Check if user came from within the same domain
+            const referrer = document.referrer;
+            const currentDomain = window.location.origin;
+
+            // If user came from the same domain and has history, go back
+            if (referrer && referrer.startsWith(currentDomain) && window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Navigate to home page immediately
+                window.location.href = '/';
+            }
+        }
+
+        // Add smooth page entry animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.querySelector('.profile-container');
+            if (container) {
+                container.style.transform = 'translateY(30px)';
+                container.style.opacity = '0';
+                container.style.transition = 'all 0.5s ease';
+
+                setTimeout(() => {
+                    container.style.transform = 'translateY(0)';
+                    container.style.opacity = '1';
+                }, 100);
+            }
+        });
+    </script>
 </body>
+
+</html>
+</body>
+
 </html>

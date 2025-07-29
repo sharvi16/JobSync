@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-dotenv.config();
+dotenv.config(); //env
 
 const registerUserController = async (req, res) => {
   const { name, email, password, role } = req.body;

@@ -38,14 +38,28 @@ const registerUserController = async (req, res) => {
     newUser.verificationToken = token;
     await newUser.save();
 
+    // checking SMTP configuration
+    console.log('SMTP Configuration Debug (Registration):');
+    console.log('SMTP_HOST:', process.env.SMTP_HOST);
+    console.log('SMTP_PORT:', process.env.SMTP_PORT);
+    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
+    console.log('SMTP_USER:', process.env.SMTP_USER);
+    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
+    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: 587,
-      secure: false,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3',
+      },
+      requireTLS: true,
     });
 
     console.log('SMTP: ', process.env.SMTP_USER);
@@ -89,17 +103,20 @@ const verificationController = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '24h',
+    const tkn = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h',
+      }
+    );
+
+    res.cookie('token', tkn, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000,
     });
-
-  res.cookie('token', tkn, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  maxAge: 24 * 60 * 60 * 1000,
-});
-
 
     req.flash('success', 'Email verified successfully! Welcome to JobSync.');
     res.redirect('/');
@@ -136,18 +153,20 @@ const loginController = async (req, res) => {
       return res.redirect('/login');
     }
 
-    const tkn = jwt.sign({ id: user._id, name: user.name, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '24h',
+    const tkn = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h',
+      }
+    );
+
+    res.cookie('token', tkn, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000,
     });
-
-  res.cookie('token', tkn, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  maxAge: 24 * 60 * 60 * 1000,
-});
-
-
 
     req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/');
@@ -161,11 +180,11 @@ const loginController = async (req, res) => {
 const logoutController = async (req, res) => {
   try {
     res.cookie('token', '', {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  maxAge: 0, // expire cookie
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 0, // expire cookie
+    });
 
     req.flash('info', 'You have been logged out successfully.');
     res.redirect('/');
@@ -220,14 +239,29 @@ const forgetPasswordController = async (req, res) => {
     await user.save();
 
     console.log('user inside of forget pass: ', user);
+
+    // checking SMTP configuration
+    console.log('SMTP Configuration Debug (Password Reset):');
+    console.log('SMTP_HOST:', process.env.SMTP_HOST);
+    console.log('SMTP_PORT:', process.env.SMTP_PORT);
+    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
+    console.log('SMTP_USER:', process.env.SMTP_USER);
+    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
+    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: 587,
-      secure: false,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3',
+      },
+      requireTLS: true,
     });
 
     console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
@@ -312,15 +346,29 @@ const resendVerificationController = async (req, res) => {
     user.verificationToken = token;
     await user.save();
 
+    // checking SMTP configuration
+    console.log('SMTP Configuration Debug (Resend Verification):');
+    console.log('SMTP_HOST:', process.env.SMTP_HOST);
+    console.log('SMTP_PORT:', process.env.SMTP_PORT);
+    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
+    console.log('SMTP_USER:', process.env.SMTP_USER);
+    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
+    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
+
     // Send verification email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: 587,
-      secure: false,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === 'true',
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3',
+      },
+      requireTLS: true,
     });
 
     console.log('FRONTEND_URL:', process.env.FRONTEND_URL);

@@ -38,15 +38,6 @@ const registerUserController = async (req, res) => {
     newUser.verificationToken = token;
     await newUser.save();
 
-    // checking SMTP configuration
-    console.log('SMTP Configuration Debug (Registration):');
-    console.log('SMTP_HOST:', process.env.SMTP_HOST);
-    console.log('SMTP_PORT:', process.env.SMTP_PORT);
-    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
-    console.log('SMTP_USER:', process.env.SMTP_USER);
-    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
-    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
-
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -238,17 +229,6 @@ const forgetPasswordController = async (req, res) => {
     user.resetPasswordExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save();
 
-    console.log('user inside of forget pass: ', user);
-
-    // checking SMTP configuration
-    console.log('SMTP Configuration Debug (Password Reset):');
-    console.log('SMTP_HOST:', process.env.SMTP_HOST);
-    console.log('SMTP_PORT:', process.env.SMTP_PORT);
-    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
-    console.log('SMTP_USER:', process.env.SMTP_USER);
-    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
-    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
-
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
@@ -345,15 +325,6 @@ const resendVerificationController = async (req, res) => {
     const token = crypto.randomBytes(32).toString('hex');
     user.verificationToken = token;
     await user.save();
-
-    // checking SMTP configuration
-    console.log('SMTP Configuration Debug (Resend Verification):');
-    console.log('SMTP_HOST:', process.env.SMTP_HOST);
-    console.log('SMTP_PORT:', process.env.SMTP_PORT);
-    console.log('SMTP_SECURE:', process.env.SMTP_SECURE);
-    console.log('SMTP_USER:', process.env.SMTP_USER);
-    console.log('SMTP_PASS:', process.env.SMTP_PASS ? '***HIDDEN***' : 'NOT SET');
-    console.log('SMTP_SENDER:', process.env.SMTP_SENDER);
 
     // Send verification email
     const transporter = nodemailer.createTransport({

@@ -22,12 +22,14 @@ const PORT = process.env.PORT || 10000;
 app.set('trust proxy', 1); // Important for Render
 
 // === Force HTTPS Redirect (for Render) ===
+if (process.env.NODE_ENV === "production") {
 app.use((req, res, next) => {
   if (req.headers['x-forwarded-proto'] !== 'https' && process.env.NODE_ENV === 'production') {
     return res.redirect('https://' + req.headers.host + req.url);
   }
   next();
 });
+}
 
 // ========== MONGO DB SETUP ==========
 async function main() {
@@ -233,4 +235,10 @@ app.post('/send-email', emailRateLimit, async (req, res) => {
 // === START SERVER ===
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+});
+
+
+// 404 handler - keep this as the last middleware
+app.use((req, res, next) => {
+  res.status(404).render('404'); // Use .sendFile if you're not using a template engine
 });

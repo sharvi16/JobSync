@@ -20,8 +20,8 @@
 
 ## 🌐 Live Demo
 
-### 🚀 **Experience JobSync Now:**
-Visit the live platform: **[jobsync-new.onrender.com](jobsync-new.onrender.com)**
+### 🚀 Experience JobSync Now  
+Visit the live platform: [jobsync-new.onrender.com](https://jobsync-new.onrender.com)
 
 ### 📸 **Screenshots**
 ![JobSync Screenshot](https://res.cloudinary.com/dcf0cpuqf/image/upload/v1738695543/Screenshot_2025-02-02_181936_qpdcqu.png)

@@ -166,12 +166,16 @@ app.get('/api/totalusers', async (req, res) => {
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
-  secure: true,
+  secure: process.env.SMTP_SECURE === 'true', // false for port 587, true for port 465
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
-  tls: { rejectUnauthorized: false },
+  tls: { 
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  },
+  requireTLS: true, // Force TLS for Brevo
 });
 
 // Contact form submission
@@ -202,8 +206,8 @@ app.post('/send-email', emailRateLimit, async (req, res) => {
     });
 
     const mailOptions = {
-      from: `"${user_name}" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
+      from: `"JobSync Contact Form" <${process.env.SMTP_SENDER}>`,
+      to: process.env.SMTP_SENDER, // Send to your verified Brevo sender email
       replyTo: user_email,
       subject: `New Contact Form Submission from ${user_name} - JobSync`,
       html: `<p><strong>Name:</strong> ${user_name}<br>

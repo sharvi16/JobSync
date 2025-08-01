@@ -1,9 +1,11 @@
 const User = require('../models/user.js');
+const Job = require('../models/job.js');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jobFetcher = require('../services/jobFetcher.js');
 
 dotenv.config(); //env
 
@@ -376,13 +378,64 @@ const dashboardController = async (req, res) => {
       req.flash('error', 'User data not found. Please login again.');
       return res.redirect('/login');
     }
-    res.render('dashboard.ejs', { user });
+
+    // Get fresh job statistics for dashboard
+    const jobStats = await getJobStats();
+
+    res.render('dashboard.ejs', {
+      apiKey: process.env.GOOGLE_CLOUD_SEARCH_API,
+      engineId: process.env.GOOGLE_SEARCH_ENGINE_API,
+      jobStats: jobStats,
+      user: user,
+    });
   } catch (error) {
     console.log('Error loading dashboard: ', error);
     req.flash('error', 'Failed to load dashboard. Please try again later.');
     res.redirect('/login');
   }
 };
+
+// Helper function to get job statistics
+async function getJobStats() {
+  try {
+    const totalJobs = await Job.countDocuments({ isActive: true });
+    const recentJobs = await Job.countDocuments({
+      isActive: true,
+      fetchedAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    });
+
+    const jobsByCategory = await Job.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+    ]);
+
+    const jobsBySource = await Job.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$source', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+
+    return {
+      totalJobs,
+      recentJobs,
+      categories: jobsByCategory,
+      sources: jobsBySource,
+      lastUpdated: await Job.findOne({ isActive: true }, {}, { sort: { fetchedAt: -1 } })
+        ?.fetchedAt,
+    };
+  } catch (error) {
+    console.error('Error getting job stats:', error);
+    return {
+      totalJobs: 0,
+      recentJobs: 0,
+      categories: [],
+      sources: [],
+      lastUpdated: null,
+    };
+  }
+}
 
 module.exports = {
   registerUserController,

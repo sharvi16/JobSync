@@ -37,7 +37,16 @@ const jobSchema = new mongoose.Schema(
     },
     jobType: {
       type: String,
-      enum: ['full-time', 'part-time', 'contract', 'internship', 'remote', 'not-specified'],
+      enum: [
+        'full-time',
+        'part-time',
+        'contract',
+        'internship',
+        'remote',
+        'daily',
+        'weekly',
+        'not-specified',
+      ],
       default: 'not-specified',
     },
     skills: {

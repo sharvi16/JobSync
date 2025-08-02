@@ -4,20 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Find Work Today - JobSync</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     :root {
-      --font-primary: "PP Object Sans", Arial, sans-serif;
-      --font-secondary: "Druk Wide Trial", Arial, sans-serif;
-      --color-text: #fff;
-      --color-text-secondary: #eaeaea;
-      --color-bg: #000;
-      --color-bg-secondary: #000000;
-      --color-callout: #24262a;
-      --color-accent: #e74c3c;
-      --color-accent-hover: #c0392b;
-      --color-accent-secondary: #ff6b6b;
-      --color-accent-tertiary: #f39c12;
+      --font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --color-text: #ffffff;
+      --color-text-secondary: #cccccc;
+      --color-text-muted: #999999;
+      --color-bg: #0a0a0a;
+      --color-bg-secondary: #1a1a1a;
+      --color-card: #2a2a2a;
+      --color-accent-orange: #ff6b35;
+      --color-accent-green: #00cc88;
+      --color-accent-blue: #4da6ff;
+      --color-border: #404040;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 15px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -28,939 +32,1751 @@
 
     body {
       font-family: var(--font-primary);
-      background-color: var(--color-bg);
+      background: var(--color-bg);
       color: var(--color-text);
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
       min-height: 100vh;
-    }
-
-    h1 {
-      font-family: var(--font-secondary);
-      font-size: 3rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-bottom: 40px;
-      text-align: center;
-      background: linear-gradient(135deg, var(--color-text), var(--color-accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .search-container {
-      margin-bottom: 30px;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      background: var(--color-callout);
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    #search {
-      flex: 1;
-      padding: 15px 20px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      font-size: 16px;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--color-text);
-      font-family: var(--font-primary);
-      transition: all 0.3s ease;
-    }
-
-    #search:focus {
-      outline: none;
-      border-color: var(--color-accent);
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
-    }
-
-    #search::placeholder {
-      color: var(--color-text-secondary);
-    }
-
-    #btn-search {
-      padding: 15px 30px;
-      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
-      color: var(--color-text);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
-      font-family: var(--font-primary);
-    }
-
-    #btn-search:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
-    }
-
-    #btn-search:disabled {
-      opacity: 0.6;
-      transform: none;
-      cursor: not-allowed;
-    }
-
-    .job-card {
-      background: var(--color-callout);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 20px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .job-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-secondary), var(--color-accent-tertiary));
-    }
-
-    .job-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--color-accent);
-      box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
-    }
-
-    .job-title {
-      font-size: 22px;
-      font-weight: bold;
-      color: var(--color-text);
-      margin-bottom: 15px;
-      font-family: var(--font-primary);
-    }
-
-    .job-title a {
-      text-decoration: none;
-      color: var(--color-text);
-      transition: color 0.3s ease;
-    }
-
-    .job-title a:hover {
-      color: var(--color-accent);
-    }
-
-    .job-snippet {
-      color: var(--color-text-secondary);
       line-height: 1.6;
-      margin-bottom: 15px;
-      font-size: 15px;
     }
 
-    .job-url {
-      font-size: 13px;
-      color: var(--color-accent);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
     }
 
-    .no-results {
+    /* Header Section */
+    .header-section {
       text-align: center;
-      color: var(--color-text-secondary);
-      font-style: italic;
-      padding: 60px 20px;
-      background: var(--color-callout);
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 3rem;
     }
 
-    .no-results h3 {
+    .main-title {
+      font-size: 2.5rem;
+      font-weight: 700;
       color: var(--color-text);
-      margin-bottom: 10px;
-      font-size: 24px;
+      margin-bottom: 0.5rem;
     }
 
-    #loading {
-      text-align: center;
+    .subtitle {
       color: var(--color-text-secondary);
-      font-style: italic;
-      padding: 40px;
-      background: var(--color-callout);
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .pagination {
+    .stats-row {
       display: flex;
       justify-content: center;
-      align-items: center;
-      margin: 40px 0;
-      gap: 10px;
+      gap: 2rem;
+      margin-bottom: 2rem;
       flex-wrap: wrap;
     }
 
-    .pagination button {
-      padding: 12px 20px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      background: var(--color-callout);
-      color: var(--color-text);
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      font-family: var(--font-primary);
-    }
-
-    .pagination button:hover:not(:disabled) {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      transform: translateY(-2px);
-    }
-
-    .pagination button.active {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
-    }
-
-    .pagination button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .pagination-info {
-      margin: 0 15px;
-      color: var(--color-text-secondary);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-      padding: 20px;
-      background: var(--color-callout);
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .results-count {
-      color: var(--color-text);
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .per-page-selector {
+    .stat-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .per-page-selector label {
+      gap: 0.5rem;
       color: var(--color-text-secondary);
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 0.9rem;
     }
 
-    .per-page-selector select {
-      padding: 8px 15px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+    .stat-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-accent-green);
+    }
+
+    /* Search Section */
+    .search-section {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--color-border);
+    }
+
+    .search-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 2.5rem;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
       border-radius: 8px;
-      font-size: 14px;
-      background: rgba(255, 255, 255, 0.05);
       color: var(--color-text);
-      font-family: var(--font-primary);
-      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
     }
 
-    .per-page-selector select:focus {
+    .search-input:focus {
       outline: none;
-      border-color: var(--color-accent);
+      border-color: var(--color-accent-orange);
+      background: var(--color-bg);
     }
 
-    .preloaded-notice {
-      background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(255, 107, 107, 0.1));
-      border: 1px solid rgba(231, 76, 60, 0.4);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 25px;
-      color: var(--color-text);
-      font-size: 14px;
+    .search-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .btn-primary {
+      background: var(--color-accent-orange);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.5rem;
     }
 
-    .preloaded-notice .icon {
-      font-size: 18px;
+    .btn-primary:hover {
+      background: #e55a2b;
+      transform: translateY(-1px);
     }
 
-    .sample-badge {
-      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-      color: #fff;
-      padding: 4px 12px;
-      border-radius: 15px;
-      font-size: 11px;
-      font-weight: bold;
-      margin-left: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-accent-orange);
+      border: 1px solid var(--color-accent-orange);
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-accent-orange);
+      color: white;
     }
 
     .filter-section {
-      background: var(--color-callout);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 40px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .filter-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-secondary), var(--color-accent-tertiary), #e67e22);
-    }
-
-    .filter-title {
-      font-family: var(--font-secondary);
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--color-text);
-      margin-bottom: 25px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      gap: 1rem;
     }
 
-    .filter-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .filter-btn {
-      padding: 15px 20px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--color-text);
-      border-radius: 15px;
+    .quick-filters {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--color-text-secondary);
       cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .quick-filters:hover {
+      border-color: var(--color-accent-orange);
+      color: var(--color-text);
+    }
+
+    /* Quick Filter Pills */
+    .filters-container {
+      background: var(--color-card);
+      border: 1px solid var(--color-accent-orange);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .filter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-accent-orange);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .filter-header:hover {
+      color: #e55a2b;
+    }
+
+    .filter-pills {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .filter-pill {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      text-align: center;
       justify-content: center;
-      gap: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-family: var(--font-primary);
+    }
+
+    .filter-pill:hover {
+      border-color: var(--color-accent-orange);
+      color: var(--color-accent-orange);
+      background: rgba(255, 107, 53, 0.1);
+    }
+
+    .filter-pill.active {
+      background: var(--color-accent-orange);
+      border-color: var(--color-accent-orange);
+      color: white;
+    }
+
+    .filter-pill i {
+      font-size: 0.9rem;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid var(--color-border);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .stat-card:nth-child(1) .stat-number {
+      color: var(--color-accent-green);
+    }
+
+    .stat-card:nth-child(2) .stat-number {
+      color: var(--color-accent-orange);
+    }
+
+    .stat-card:nth-child(3) .stat-number {
+      color: var(--color-accent-blue);
+    }
+
+    .stat-label {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .stat-sublabel {
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Jobs Section */
+    .jobs-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .jobs-count {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .job-card {
+      background: var(--color-card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid var(--color-border);
+      transition: all 0.3s ease;
+      cursor: pointer;
       position: relative;
-      overflow: hidden;
-    }
-
-    .filter-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
+      display: flex;
+      flex-direction: column;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.5s ease;
+      min-height: 350px;
     }
 
-    .filter-btn:hover::before {
-      left: 100%;
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--color-accent-orange);
     }
 
-    .filter-btn:hover {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4);
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
     }
 
-    .filter-btn.active {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+    .job-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
-    .filter-icon {
-      font-size: 18px;
+    .job-description {
+      margin: 0.75rem 0;
+      color: var(--color-text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      flex-grow: 1;
     }
 
+    .job-info h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .job-company {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .job-location {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .job-badge {
+      background: var(--color-accent-orange);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .job-badge.urgent {
+      background: #ff4444;
+    }
+
+    .job-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .job-type {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .job-type-display {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--color-accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .job-source {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .job-badge.featured {
+      background: var(--color-accent-green);
+    }
+
+    .job-badge.popular {
+      background: var(--color-accent-blue);
+    }
+
+    .job-badge.trending {
+      background: #ff6b35;
+    }
+
+    .job-badge.verified {
+      background: #9c27b0;
+    }
+
+    .job-details {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
+
+    .job-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #ffd700;
+    }
+
+    .apply-btn {
+      background: var(--color-accent-orange);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: auto;
+      align-self: flex-end;
+    }
+
+    .apply-btn:hover {
+      background: #e55a2b;
+      transform: translateY(-1px);
+    }
+
+    /* Loading and Empty States */
+    .loading-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--color-text-secondary);
+    }
+
+    .loading-spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 2px solid var(--color-border);
+      border-top: 2px solid var(--color-accent-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--color-text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: var(--color-text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Pagination Styles */
+    .pagination-container {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--color-card);
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+    }
+
+    .pagination-info {
+      text-align: center;
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pagination-btn {
+      background: var(--color-bg-secondary);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--color-accent-orange);
+      border-color: var(--color-accent-orange);
+      color: white;
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .page-number {
+      background: var(--color-bg-secondary);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 2.5rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .page-number:hover {
+      background: var(--color-accent-orange);
+      border-color: var(--color-accent-orange);
+      color: white;
+    }
+
+    .page-number.active {
+      background: var(--color-accent-orange);
+      border-color: var(--color-accent-orange);
+      color: white;
+    }
+
+    .page-ellipsis {
+      color: var(--color-text-muted);
+      padding: 0.5rem;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-      h1 {
+      .container {
+        padding: 1rem;
+      }
+
+      .main-title {
         font-size: 2rem;
       }
 
-      .search-container {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      #search,
-      #btn-search {
-        width: 100%;
-      }
-
-      .filter-buttons {
+      .search-form {
         grid-template-columns: 1fr;
       }
 
-      .results-header {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .jobs-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        gap: 0.5rem;
       }
 
-      .pagination {
-        gap: 8px;
-      }
-
-      .pagination button {
-        padding: 10px 15px;
-        font-size: 12px;
+      .stats-row {
+        flex-direction: column;
+        gap: 0.5rem;
       }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
-      }
-
-      .filter-section,
-      .search-container {
-        padding: 20px;
+      .search-form {
+        gap: 0.75rem;
       }
 
       .job-card {
-        padding: 20px;
+        padding: 1rem;
+      }
+
+      .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-pills {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pagination-controls {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .page-numbers {
+        order: -1;
+      }
+
+      .pagination-btn {
+        flex: 1;
+        justify-content: center;
       }
     }
   </style>
 </head>
 
 <body>
-  <h1>Job Search Dashboard</h1>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">Find Daily Wage Work</h1>
+      <p class="subtitle">Connect with local employers and discover blue collar opportunities</p>
 
-  <!-- Quick Filter Section -->
-  <div class="filter-section">
-    <div class="filter-title">
-      <span class="filter-icon">🔍</span>
-      Quick Job Filters
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="dot"></div>
+          <span>Daily Work</span>
+        </div>
+        <div class="stat-item">
+          <div class="dot"></div>
+          <span>Local Employers</span>
+        </div>
+        <div class="stat-item">
+          <div class="dot"></div>
+          <span>Fair Wages</span>
+        </div>
+      </div>
     </div>
-    <div class="filter-buttons">
-      <button class="filter-btn" onclick="quickSearch('web developer')">
-        <span class="filter-icon">💻</span>
-        Web Developer
-      </button>
-      <button class="filter-btn" onclick="quickSearch('java developer')">
-        <span class="filter-icon">☕</span>
-        Java Developer
-      </button>
-      <button class="filter-btn" onclick="quickSearch('python developer')">
-        <span class="filter-icon">🐍</span>
-        Python Developer
-      </button>
-      <button class="filter-btn" onclick="quickSearch('react developer')">
-        <span class="filter-icon">⚛️</span>
-        React Developer
-      </button>
-      <button class="filter-btn" onclick="quickSearch('data scientist')">
-        <span class="filter-icon">📊</span>
-        Data Scientist
-      </button>
-      <button class="filter-btn" onclick="quickSearch('ui ux designer')">
-        <span class="filter-icon">🎨</span>
-        UI/UX Designer
-      </button>
-      <button class="filter-btn" onclick="quickSearch('full stack developer')">
-        <span class="filter-icon">🚀</span>
-        Full Stack
-      </button>
-      <button class="filter-btn" onclick="quickSearch('mobile app developer')">
-        <span class="filter-icon">📱</span>
-        Mobile Developer
-      </button>
+
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-form">
+        <div class="input-group">
+          <i class="fas fa-briefcase"></i>
+          <input type="text" id="search" class="search-input"
+            placeholder="Construction worker, maid, security guard, driver...">
+        </div>
+        <div class="input-group">
+          <i class="fas fa-map-marker-alt"></i>
+          <input type="text" id="location" class="search-input" placeholder="City or area...">
+        </div>
+        <button id="btn-search" class="btn-primary">
+          <i class="fas fa-search"></i>
+          Find Work
+        </button>
+      </div>
+
+      <div class="filter-section">
+        <button class="btn-secondary">
+          <i class="fas fa-microphone"></i>
+          Voice Search
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Filters Section -->
+    <div class="filters-container" id="filters-container">
+      <div class="filter-header" onclick="toggleFilters()">
+        <i class="fas fa-filter"></i>
+        <span>Quick Filters</span>
+        <i class="fas fa-chevron-down" style="margin-left: auto;"></i>
+      </div>
+      <div class="filter-pills" id="filter-pills" style="display: none;">
+        <div class="filter-pill" data-filter="jobType" data-value="daily">
+          <i class="fas fa-calendar-day"></i>
+          Daily Wage
+        </div>
+        <div class="filter-pill" data-filter="jobType" data-value="weekly">
+          <i class="fas fa-calendar-week"></i>
+          Weekly
+        </div>
+        <div class="filter-pill" data-filter="jobType" data-value="contract">
+          <i class="fas fa-handshake"></i>
+          Contract
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="construction">
+          <i class="fas fa-hard-hat"></i>
+          Construction
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="housekeeping">
+          <i class="fas fa-broom"></i>
+          Housekeeping
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="security">
+          <i class="fas fa-shield-alt"></i>
+          Security
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="driver">
+          <i class="fas fa-car"></i>
+          Driver
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="delivery">
+          <i class="fas fa-shipping-fast"></i>
+          Delivery
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="cook">
+          <i class="fas fa-utensils"></i>
+          Cook
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="gardener">
+          <i class="fas fa-seedling"></i>
+          Gardener
+        </div>
+        <div class="filter-pill" data-filter="category" data-value="painter">
+          <i class="fas fa-paint-roller"></i>
+          Painter
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">
+          2K+
+        </div>
+        <div class="stat-label">Daily Work Opportunities</div>
+        <div class="stat-sublabel">Fresh openings every day</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">
+          150+
+        </div>
+        <div class="stat-label">Local Employers</div>
+        <div class="stat-sublabel">Verified contractors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">
+          ₹400+
+        </div>
+        <div class="stat-label">Average Daily Wage</div>
+        <div class="stat-sublabel">Fair compensation</div>
+      </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div class="jobs-section">
+      <div class="section-header">
+        <h2 class="section-title">Available Work</h2>
+        <div id="jobs-count" class="jobs-count">5 opportunities found near you</div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading" class="loading-state" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Finding work opportunities...</p>
+      </div>
+
+      <!-- Jobs Grid -->
+      <div id="results-container" class="jobs-grid">
+        <!-- Jobs will be loaded here -->
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="pagination-container" style="display: none;">
+        <div class="pagination-info">
+          <span id="pagination-info">Showing <span id="current-range">1-6</span> of <span id="total-jobs">0</span>
+            opportunities</span>
+        </div>
+        <div class="pagination-controls">
+          <button id="prev-page" class="pagination-btn" disabled>
+            <i class="fas fa-chevron-left"></i>
+            Previous
+          </button>
+          <div class="page-numbers" id="page-numbers">
+            <!-- Page numbers will be generated here -->
+          </div>
+          <button id="next-page" class="pagination-btn">
+            Next
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="search-container">
-    <input id="search" value="" type="text" placeholder="Search for job listings">
-    <button id="btn-search">Search</button>
-  </div>
+  <script>
+    // Global variables
+    let currentJobs = [];
+    let currentPage = 1;
+    let jobsPerPage = 6;
+    let activeFilters = {};
+    let totalPages = 1;
 
-  <div id="loading" style="display: none;">
-    <p>Searching for jobs...</p>
-  </div>
+    // Function to toggle filters visibility
+    function toggleFilters() {
+      const filterPills = document.getElementById('filter-pills');
+      const filterArrow = document.querySelector('.filter-header .fa-chevron-up, .filter-header .fa-chevron-down');
 
-  <div id="results-container">
-    <!-- Search results will be displayed here -->
-  </div>
+      if (filterPills.style.display === 'none') {
+        filterPills.style.display = 'grid';
+        if (filterArrow) {
+          filterArrow.classList.remove('fa-chevron-down');
+          filterArrow.classList.add('fa-chevron-up');
+        }
+      } else {
+        filterPills.style.display = 'none';
+        if (filterArrow) {
+          filterArrow.classList.remove('fa-chevron-up');
+          filterArrow.classList.add('fa-chevron-down');
+        }
+      }
+    }
 
-  <div id="pagination-container" style="display: none;">
-    <!-- Pagination controls will be displayed here -->
-  </div>
+    // Function to handle filter selection
+    function handleFilterClick(filterElement) {
+      const filterType = filterElement.dataset.filter;
+      const filterValue = filterElement.dataset.value;
 
+      // Toggle active state
+      if (filterElement.classList.contains('active')) {
+        filterElement.classList.remove('active');
+        delete activeFilters[filterType];
+      } else {
+        // Remove other active filters of the same type
+        document.querySelectorAll(`[data-filter="${filterType}"]`).forEach(el => {
+          el.classList.remove('active');
+        });
 
+        filterElement.classList.add('active');
+        activeFilters[filterType] = filterValue;
+      }
 
-</body>
-<script>
-  // Global variables for pagination
-  let currentJobs = [];
-  let currentPage = 1;
-  let jobsPerPage = 5;
+      // Apply filters to search
+      applyFilters();
+    }
 
-  // Function to load jobs from cron job database
-  async function loadJobsFromDatabase(filters = {}) {
-    try {
-      const params = new URLSearchParams();
+    // Function to apply active filters
+    async function applyFilters() {
+      const searchTerm = document.getElementById('search').value.trim() || 'jobs';
+      const location = document.getElementById('location').value.trim();
 
-      if (filters.search) params.append('search', filters.search);
-      if (filters.category) params.append('category', filters.category);
-      if (filters.location) params.append('location', filters.location);
-      if (filters.jobType) params.append('jobType', filters.jobType);
-      if (filters.page) params.append('page', filters.page);
-      if (filters.limit) params.append('limit', filters.limit);
+      let enhancedSearchTerm = searchTerm;
 
-      const response = await fetch(`/api/jobs?${params.toString()}`);
-      const result = await response.json();
+      // Add category filter to search term
+      if (activeFilters.category) {
+        enhancedSearchTerm = `${activeFilters.category}`;
+      }
 
-      if (result.success && result.data) {
-        // Transform database jobs to match the expected format
-        const transformedJobs = result.data.map(job => ({
-          kind: "customsearch#result",
-          title: job.title,
-          htmlTitle: job.title,
-          link: job.url,
-          displayLink: job.source || job.company,
-          snippet: job.description,
-          htmlSnippet: job.description,
-          company: job.company,
-          location: job.location,
-          jobType: job.jobType,
-          skills: job.skills,
-          category: job.category,
-          postedDate: job.postedDate
-        }));
+      console.log('Applying filters:', activeFilters);
+      console.log('Enhanced search term:', enhancedSearchTerm);
 
-        return {
-          success: true,
-          jobs: transformedJobs,
-          pagination: result.pagination
+      // Show loading state
+      const loadingDiv = document.getElementById('loading');
+      loadingDiv.style.display = 'block';
+      document.getElementById('results-container').innerHTML = '';
+
+      try {
+        const jobData = await getJobListings(enhancedSearchTerm, location);
+
+        // Apply client-side filtering based on actual API fields
+        let filteredJobs = jobData.jobs;
+
+        if (activeFilters.jobType) {
+          filteredJobs = filteredJobs.filter(job =>
+            job.jobType && job.jobType.toLowerCase().includes(activeFilters.jobType.toLowerCase())
+          );
+          console.log(`Filtered by job type ${activeFilters.jobType}: ${filteredJobs.length} jobs`);
+        }
+
+        if (activeFilters.location && activeFilters.location === 'local') {
+          filteredJobs = filteredJobs.filter(job =>
+            job.location && !job.location.toLowerCase().includes('remote')
+          );
+          console.log(`Filtered for local jobs: ${filteredJobs.length} jobs`);
+        }
+
+        if (activeFilters.source) {
+          filteredJobs = filteredJobs.filter(job =>
+            job.source && job.source.toLowerCase().includes(activeFilters.source.toLowerCase())
+          );
+          console.log(`Filtered by source ${activeFilters.source}: ${filteredJobs.length} jobs`);
+        }
+
+        displayJobListings({ success: true, jobs: filteredJobs });
+      } catch (error) {
+        console.error('Filter application failed:', error);
+      } finally {
+        loadingDiv.style.display = 'none';
+      }
+    }
+
+    // Function to load jobs from database
+    async function loadJobsFromDatabase(filters = {}) {
+      try {
+        console.log('🔍 Attempting to load jobs from database with filters:', filters);
+
+        const params = new URLSearchParams();
+
+        if (filters.search) params.append('search', filters.search);
+        if (filters.category) params.append('category', filters.category);
+        if (filters.location) params.append('location', filters.location);
+        if (filters.jobType) params.append('jobType', filters.jobType);
+        if (filters.page) params.append('page', filters.page);
+        if (filters.limit) params.append('limit', filters.limit);
+
+        const url = `/api/jobs?${params.toString()}`;
+        console.log('📡 Making API request to:', url);
+
+        const response = await fetch(url);
+        console.log('📊 API Response status:', response.status, response.statusText);
+
+        const result = await response.json();
+        console.log('📋 API Response data:', result);
+
+        if (result.success && result.data) {
+          const transformedJobs = result.data.map(job => ({
+            kind: "customsearch#result",
+            title: job.title,
+            htmlTitle: job.title,
+            link: job.url,
+            displayLink: job.source || job.company,
+            snippet: job.description,
+            htmlSnippet: job.description,
+            company: job.company,
+            location: job.location,
+            jobType: job.jobType,
+            skills: job.skills,
+            category: job.category,
+            postedDate: job.postedDate
+          }));
+
+          console.log(`✅ Successfully transformed ${transformedJobs.length} jobs from database`);
+          return {
+            success: true,
+            jobs: transformedJobs,
+            pagination: result.pagination
+          };
+        } else {
+          console.log('⚠️ No jobs found in database response:', result.message || 'No message');
+          return { success: true, jobs: [], message: result.message || 'No jobs found' };
+        }
+      } catch (error) {
+        console.error('❌ Error loading jobs from database:', error);
+        return { success: false, error: 'Failed to load jobs from database' };
+      }
+    }
+
+    // Function to get job listings
+    const apiKey = '<%= apiKey %>';
+    const cx = '<%= engineId %>';
+
+    async function getJobListings(searchTerm = 'Construction worker', location = '') {
+      try {
+        const dbFilters = {
+          search: searchTerm,
+          limit: 50
         };
-      } else {
-        return { success: true, jobs: [], message: result.message || 'No jobs found' };
+
+        if (location && location.trim()) {
+          dbFilters.location = location.trim();
+        }
+
+        const dbResult = await loadJobsFromDatabase(dbFilters);
+
+        if (dbResult.success && dbResult.jobs.length > 0) {
+          console.log(`✅ Found ${dbResult.jobs.length} jobs from database`);
+          return dbResult;
+        }
+
+        // Fallback to Google API
+        console.log(`🔄 No database results, trying Google API...`);
+
+        let searchQuery = searchTerm + ' jobs';
+        if (location && location.trim()) {
+          searchQuery += ` in ${location.trim()}`;
+        }
+
+        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(searchQuery)}`);
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+          const enhancedJobs = data.items.map((job, index) => {
+            let extractedLocation = 'Remote';
+            if (location && location.trim()) {
+              extractedLocation = location.trim();
+            } else {
+              const sampleLocations = ['Mumbai, MH', 'Delhi, DL', 'Bangalore, KA', 'Chennai, TN', 'Pune, MH', 'Hyderabad, TS'];
+              extractedLocation = sampleLocations[index % sampleLocations.length];
+            }
+
+            return {
+              ...job,
+              location: extractedLocation
+            };
+          });
+
+          return { success: true, jobs: enhancedJobs };
+        } else {
+          return { success: true, jobs: [], message: 'No jobs found for your search' };
+        }
+      } catch (error) {
+        console.error('Error fetching job listings:', error);
+        return { success: false, error: 'Failed to fetch jobs' };
       }
-    } catch (error) {
-      console.error('Error loading jobs from database:', error);
-      return { success: false, error: 'Failed to load jobs from database' };
     }
-  }
 
-  // Function to get job listings from API
-  const apiKey = '<%= apiKey %>';
-  const cx = '<%= engineId %>';
+    // Function to display job listings
+    function displayJobListings(jobData, page = 1) {
+      const resultsContainer = document.getElementById('results-container');
+      const jobsCount = document.getElementById('jobs-count');
+      const paginationContainer = document.getElementById('pagination');
 
-  async function getJobListings(searchTerm = 'Web developers') {
-    try {
-      // First, try to get jobs from the database
-      const dbResult = await loadJobsFromDatabase({
-        search: searchTerm,
-        limit: 50 // Get more results from database
-      });
-
-      if (dbResult.success && dbResult.jobs.length > 0) {
-        console.log(`✅ Found ${dbResult.jobs.length} jobs from database for: ${searchTerm}`);
-        return dbResult;
-      }
-
-      // If no database results, fall back to Google API
-      console.log(`🔄 No database results for "${searchTerm}", trying Google API...`);
-
-      const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(searchTerm + ' jobs')}`);
-      const data = await response.json();
-
-      if (data.items && data.items.length > 0) {
-        return { success: true, jobs: data.items };
-      } else {
-        return { success: true, jobs: [], message: 'No jobs found for your search' };
-      }
-    } catch (error) {
-      console.error('Error fetching job listings:', error);
-      return { success: false, error: 'Failed to fetch jobs' };
-    }
-  }
-
-  // Function to display paginated job listings
-  function displayJobListings(jobData, isPreloaded = false) {
-    const resultsContainer = document.getElementById('results-container');
-    const paginationContainer = document.getElementById('pagination-container');
-
-    if (!jobData.success) {
-      resultsContainer.innerHTML = `
-        <div class="no-results">
+      if (!jobData.success) {
+        resultsContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
           <h3>Error: ${jobData.error}</h3>
           <p>Please try again later.</p>
         </div>
       `;
-      paginationContainer.style.display = 'none';
-      return;
-    }
+        jobsCount.textContent = '0 opportunities found';
+        paginationContainer.style.display = 'none';
+        return;
+      }
 
-    if (jobData.jobs.length === 0) {
-      resultsContainer.innerHTML = `
-        <div class="no-results">
-          <h3>No jobs found</h3>
+      if (jobData.jobs.length === 0) {
+        resultsContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <h3>No work found</h3>
           <p>Try searching with different keywords.</p>
         </div>
       `;
-      paginationContainer.style.display = 'none';
-      return;
-    }
-
-    // Store jobs globally and reset to first page
-    currentJobs = jobData.jobs;
-    currentPage = 1;
-
-    // Display current page
-    displayCurrentPage(isPreloaded);
-
-    // Show pagination if there are multiple pages
-    if (currentJobs.length > jobsPerPage) {
-      displayPagination();
-      paginationContainer.style.display = 'block';
-    } else {
-      paginationContainer.style.display = 'none';
-    }
-  }
-
-  // Function to display jobs for current page
-  function displayCurrentPage(isPreloaded = false) {
-    const resultsContainer = document.getElementById('results-container');
-    const startIndex = (currentPage - 1) * jobsPerPage;
-    const endIndex = startIndex + jobsPerPage;
-    const pageJobs = currentJobs.slice(startIndex, endIndex);
-
-    const jobsHTML = pageJobs.map(job => `
-      <div class="job-card">
-        <div class="job-title">
-          <a href="${job.link}" target="_blank">${job.title}</a>
-        </div>
-        <div class="job-snippet">
-          ${job.snippet || 'No description available'}
-        </div>
-        <div class="job-url">
-          ${job.displayLink}
-        </div>
-      </div>
-    `).join('');
-
-    const totalPages = Math.ceil(currentJobs.length / jobsPerPage);
-    const showingStart = startIndex + 1;
-    const showingEnd = Math.min(endIndex, currentJobs.length);
-
-
-    resultsContainer.innerHTML = `
-      <div class="results-header">
-        <div class="results-count">
-          Showing ${showingStart}-${showingEnd} of ${currentJobs.length} job listings
-        </div>
-        <div class="per-page-selector">
-          <label for="per-page">Jobs per page:</label>
-          <select id="per-page" onchange="changeJobsPerPage(this.value)">
-            <option value="5" ${jobsPerPage === 5 ? 'selected' : ''}>5</option>
-            <option value="10" ${jobsPerPage === 10 ? 'selected' : ''}>10</option>
-            <option value="15" ${jobsPerPage === 15 ? 'selected' : ''}>15</option>
-            <option value="20" ${jobsPerPage === 20 ? 'selected' : ''}>20</option>
-          </select>
-        </div>
-      </div>
-      ${jobsHTML}
-    `;
-  }
-
-  // Function to display pagination controls
-  function displayPagination() {
-    const paginationContainer = document.getElementById('pagination-container');
-    const totalPages = Math.ceil(currentJobs.length / jobsPerPage);
-
-    let paginationHTML = '<div class="pagination">';
-
-    // Previous button
-    paginationHTML += `
-      <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-        « Previous
-      </button>
-    `;
-
-    // Page numbers
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    // Adjust start page if we're near the end
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // First page and ellipsis
-    if (startPage > 1) {
-      paginationHTML += `<button onclick="changePage(1)">1</button>`;
-      if (startPage > 2) {
-        paginationHTML += `<span class="pagination-info">...</span>`;
+        jobsCount.textContent = '0 opportunities found';
+        paginationContainer.style.display = 'none';
+        return;
       }
-    }
 
-    // Page number buttons
-    for (let i = startPage; i <= endPage; i++) {
-      paginationHTML += `
-        <button onclick="changePage(${i})" ${i === currentPage ? 'class="active"' : ''}>
-          ${i}
-        </button>
-      `;
-    }
+      currentJobs = jobData.jobs;
+      currentPage = page;
+      totalPages = Math.ceil(currentJobs.length / jobsPerPage);
 
-    // Last page and ellipsis
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        paginationHTML += `<span class="pagination-info">...</span>`;
-      }
-      paginationHTML += `<button onclick="changePage(${totalPages})">${totalPages}</button>`;
-    }
+      // Calculate start and end indices for current page
+      const startIndex = (currentPage - 1) * jobsPerPage;
+      const endIndex = startIndex + jobsPerPage;
+      const jobsToShow = currentJobs.slice(startIndex, endIndex);
 
-    // Next button
-    paginationHTML += `
-      <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-        Next »
-      </button>
-    `;
+      jobsCount.textContent = `${currentJobs.length} opportunities found near you`;
 
-    // Page info
-    paginationHTML += `
-      <div class="pagination-info">
-        Page ${currentPage} of ${totalPages}
-      </div>
-    `;
+      const jobsHTML = jobsToShow.map((job, index) => {
+        const globalIndex = startIndex + index;
+        const company = job.company || job.displayLink || 'Company';
+        const location = job.location || 'Location not specified';
+        const title = job.title || 'Job Title';
+        const jobType = job.jobType || 'Not specified';
+        const source = job.source || 'Job Board';
+        const description = job.description || job.snippet || 'No description available';
 
-    paginationHTML += '</div>';
+        // Generate sample data for display enhancements
+        const ratings = ['4.5', '4.2', '4.7', '4.1', '4.6', '4.3', '4.4', '4.8', '4.0', '4.9'];
+        const badges = ['Urgent', 'Featured', 'Today', 'Popular', 'Available', 'Verified', 'New', 'Hot', 'Trending', 'Premium'];
+        const badgeClasses = ['urgent', 'featured', '', 'popular', 'trending', 'verified', '', 'urgent', 'trending', 'featured'];
 
-    paginationContainer.innerHTML = paginationHTML;
-  }
+        const rating = ratings[globalIndex % ratings.length];
+        const badge = badges[globalIndex % badges.length];
+        const badgeClass = badgeClasses[globalIndex % badgeClasses.length];
 
-  // Function to change page
-  function changePage(newPage) {
-    const totalPages = Math.ceil(currentJobs.length / jobsPerPage);
-    if (newPage >= 1 && newPage <= totalPages) {
-      currentPage = newPage;
-      displayCurrentPage();
-      displayPagination();
-
-      // Scroll to top of results
-      document.getElementById('results-container').scrollIntoView({
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  // Function to change jobs per page
-  function changeJobsPerPage(newPerPage) {
-    jobsPerPage = parseInt(newPerPage);
-    currentPage = 1; // Reset to first page
-    displayCurrentPage();
-
-    if (currentJobs.length > jobsPerPage) {
-      displayPagination();
-      document.getElementById('pagination-container').style.display = 'block';
-    } else {
-      document.getElementById('pagination-container').style.display = 'none';
-    }
-  }
-
-  const input = document.getElementById('search');
-  const btn = document.getElementById('btn-search');
-  const loadingDiv = document.getElementById('loading');
-
-  btn.addEventListener("click", async function () {
-    const searchTerm = input.value.trim();
-
-    if (!searchTerm) {
-      alert('Please enter a search term');
-      return;
-    }
-
-    console.log('Searching for:', searchTerm);
-
-    // Show loading state
-    loadingDiv.style.display = 'block';
-    document.getElementById('results-container').innerHTML = '';
-    btn.disabled = true;
-    btn.textContent = 'Searching...';
-
-    try {
-      const jobData = await getJobListings(searchTerm);
-      console.log('Job listings:', jobData);
-
-      // Display the results
-      displayJobListings(jobData);
-
-    } catch (error) {
-      console.error('Search failed:', error);
-      document.getElementById('results-container').innerHTML = `
-        <div class="no-results">
-          <h3>Search failed</h3>
-          <p>An error occurred while searching. Please try again.</p>
-        </div>
-      `;
-    } finally {
-      // Hide loading state
-      loadingDiv.style.display = 'none';
-      btn.disabled = false;
-      btn.textContent = 'Search';
-    }
-  });
-
-  // Allow search on Enter key press
-  input.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-      btn.click();
-    }
-  });
-
-  // Load jobs from cron job database when page loads
-  document.addEventListener('DOMContentLoaded', async function () {
-    console.log('🔄 Loading jobs from cron job database...');
-
-    try {
-      const loadingDiv = document.getElementById('loading');
-      loadingDiv.style.display = 'block';
-
-      // Load recent jobs from database
-      const dbJobs = await loadJobsFromDatabase({
-        limit: 50 // Load more jobs initially
-      });
-
-      if (dbJobs.success && dbJobs.jobs.length > 0) {
-        console.log(`✅ Loaded ${dbJobs.jobs.length} jobs from database`);
-        displayJobListings(dbJobs, true);
-
-        // Add notice that these are from cron job
-        const resultsContainer = document.getElementById('results-container');
-        const noticeHTML = `
-          <div class="preloaded-notice">
-            <span class="icon">🤖</span>
-            <div>
-              <strong>Fresh Jobs from Automated System</strong><br>
-              These job listings were automatically fetched and updated by our cron job system. 
-              Last updated: ${new Date().toLocaleString()}
+        return `
+        <div class="job-card" onclick="window.open('${job.link || job.url}', '_blank')">
+          <div class="job-header">
+            <div class="job-info">
+              <h3>${title}</h3>
+              <div class="job-company">${company}</div>
+              <div class="job-location">
+                <i class="fas fa-map-marker-alt"></i>
+                ${location}
+              </div>
+            </div>
+            <div class="job-badge ${badgeClass}">${badge}</div>
+          </div>
+          
+          <div class="job-content">
+            <div class="job-description">
+              ${description.substring(0, 120)}${description.length > 120 ? '...' : ''}
+            </div>
+            
+            <div class="job-footer">
+              <div class="job-details">
+                <div class="job-rating">
+                  <i class="fas fa-star"></i>
+                  ${rating}
+                </div>
+                <span class="job-type-display">
+                  <i class="fas fa-briefcase"></i>
+                  ${jobType}
+                </span>
+              </div>
+            </div>
+            
+            <div class="job-source">
+              <i class="fas fa-external-link-alt"></i>
+              Source: ${source}
             </div>
           </div>
-        `;
-        resultsContainer.innerHTML = noticeHTML + resultsContainer.innerHTML;
-      } else {
-        // Show empty state with explanation
-        document.getElementById('results-container').innerHTML = `
-          <div class="no-results">
-            <h3>🔍 Ready to Search</h3>
-            <p>Use the search bar above or click on one of the quick filter buttons to find job listings.</p>
-            <p><small>Our automated system regularly fetches fresh job data to provide you with the latest opportunities.</small></p>
-          </div>
-        `;
-      }
-    } catch (error) {
-      console.error('Error loading initial jobs:', error);
-      document.getElementById('results-container').innerHTML = `
-        <div class="no-results">
-          <h3>🔍 Ready to Search</h3>
-          <p>Use the search bar above or click on one of the quick filter buttons to find job listings.</p>
+          
+          <button class="apply-btn" onclick="event.stopPropagation(); window.open('${job.link || job.url}', '_blank')">
+            Apply for Work
+          </button>
         </div>
       `;
-    } finally {
-      document.getElementById('loading').style.display = 'none';
-    }
-  });
+      }).join('');
 
-  // Quick search function for filter buttons
-  async function quickSearch(searchTerm) {
+      resultsContainer.innerHTML = jobsHTML;
+
+      // Show pagination if there are multiple pages
+      if (totalPages > 1) {
+        paginationContainer.style.display = 'block';
+        updatePagination();
+      } else {
+        paginationContainer.style.display = 'none';
+      }
+    }
+
+    // Function to update pagination controls
+    function updatePagination() {
+      const paginationInfo = document.getElementById('pagination-info');
+      const currentRange = document.getElementById('current-range');
+      const totalJobsSpan = document.getElementById('total-jobs');
+      const prevBtn = document.getElementById('prev-page');
+      const nextBtn = document.getElementById('next-page');
+      const pageNumbers = document.getElementById('page-numbers');
+
+      // Update info
+      const startRange = (currentPage - 1) * jobsPerPage + 1;
+      const endRange = Math.min(currentPage * jobsPerPage, currentJobs.length);
+      currentRange.textContent = `${startRange}-${endRange}`;
+      totalJobsSpan.textContent = currentJobs.length;
+
+      // Update navigation buttons
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+
+      // Generate page numbers
+      pageNumbers.innerHTML = generatePageNumbers();
+
+      // Add event listeners
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          displayJobListings({ success: true, jobs: currentJobs }, currentPage - 1);
+        }
+      };
+
+      nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+          displayJobListings({ success: true, jobs: currentJobs }, currentPage + 1);
+        }
+      };
+    }
+
+    // Function to generate page numbers
+    function generatePageNumbers() {
+      let html = '';
+      const maxVisiblePages = 5;
+
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is small
+        for (let i = 1; i <= totalPages; i++) {
+          html += `<div class="page-number ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</div>`;
+        }
+      } else {
+        // Show first page
+        html += `<div class="page-number ${1 === currentPage ? 'active' : ''}" onclick="goToPage(1)">1</div>`;
+
+        if (currentPage > 3) {
+          html += `<div class="page-ellipsis">...</div>`;
+        }
+
+        // Show pages around current page
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = start; i <= end; i++) {
+          html += `<div class="page-number ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</div>`;
+        }
+
+        if (currentPage < totalPages - 2) {
+          html += `<div class="page-ellipsis">...</div>`;
+        }
+
+        // Show last page
+        if (totalPages > 1) {
+          html += `<div class="page-number ${totalPages === currentPage ? 'active' : ''}" onclick="goToPage(${totalPages})">${totalPages}</div>`;
+        }
+      }
+
+      return html;
+    }
+
+    // Function to go to specific page
+    function goToPage(page) {
+      if (page >= 1 && page <= totalPages && page !== currentPage) {
+        displayJobListings({ success: true, jobs: currentJobs }, page);
+      }
+    }
+
+    // Search functionality
     const input = document.getElementById('search');
+    const locationInput = document.getElementById('location');
     const btn = document.getElementById('btn-search');
     const loadingDiv = document.getElementById('loading');
 
-    // Set the search term in the input
-    input.value = searchTerm;
+    btn.addEventListener("click", async function () {
+      const searchTerm = input.value.trim() || 'jobs';
+      const location = locationInput.value.trim();
 
-    // Add visual feedback - highlight the clicked button
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.closest('.filter-btn').classList.add('active');
+      console.log('Searching for:', searchTerm, location ? `in ${location}` : '(any location)');
 
-    // Show loading state
-    loadingDiv.style.display = 'block';
-    document.getElementById('results-container').innerHTML = '';
-    btn.disabled = true;
-    btn.textContent = 'Searching...';
+      // Show loading state
+      loadingDiv.style.display = 'block';
+      document.getElementById('results-container').innerHTML = '';
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finding work...';
 
-    try {
-      // First try to search in database by category
-      const categorySearch = await loadJobsFromDatabase({
-        category: searchTerm,
-        limit: 50
-      });
-
-      if (categorySearch.success && categorySearch.jobs.length > 0) {
-        console.log(`✅ Found ${categorySearch.jobs.length} jobs in database for category: ${searchTerm}`);
-        displayJobListings(categorySearch);
-      } else {
-        // Fall back to regular search
-        const jobData = await getJobListings(searchTerm);
+      try {
+        const jobData = await getJobListings(searchTerm, location);
         displayJobListings(jobData);
-      }
-    } catch (error) {
-      console.error('Quick search failed:', error);
-      document.getElementById('results-container').innerHTML = `
-        <div class="no-results">
+      } catch (error) {
+        console.error('Search failed:', error);
+        document.getElementById('results-container').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
           <h3>Search failed</h3>
           <p>An error occurred while searching. Please try again.</p>
         </div>
       `;
-    } finally {
-      // Hide loading state
-      loadingDiv.style.display = 'none';
-      btn.disabled = false;
-      btn.textContent = 'Search';
-    }
+      } finally {
+        loadingDiv.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-search"></i> Find Work';
+      }
+    });
 
-    // Remove active state after a short delay
-    setTimeout(() => {
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    }, 2000);
-  }
-</script>
+    // Allow search on Enter key press
+    input.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        btn.click();
+      }
+    });
+
+    locationInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        btn.click();
+      }
+    });
+
+    // Load default jobs when page loads
+    document.addEventListener('DOMContentLoaded', async function () {
+      console.log('🔄 Loading available work opportunities...');
+      console.log('🔑 API Key available:', apiKey ? 'Yes' : 'No');
+      console.log('🔧 Engine ID available:', cx ? 'Yes' : 'No');
+
+      // Initialize filter click handlers
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', function () {
+          handleFilterClick(this);
+        });
+      });
+
+      try {
+        loadingDiv.style.display = 'block';
+
+        // Load default jobs from database first
+        console.log('📊 Attempting to load jobs from database...');
+        const dbJobs = await loadJobsFromDatabase({
+          limit: 50
+        });
+
+        if (dbJobs.success && dbJobs.jobs.length > 0) {
+          console.log(`✅ Loaded ${dbJobs.jobs.length} work opportunities from database`);
+          displayJobListings(dbJobs);
+        } else {
+          console.log('⚠️ No database jobs found, using sample data');
+          // Show expanded blue collar sample jobs if no database jobs
+          const sampleJobs = {
+            success: true,
+            jobs: [
+              // Construction Jobs
+              {
+                title: "Construction Worker - Daily Wages",
+                company: "Mumbai Construction Co.",
+                location: "Andheri, Mumbai",
+                jobType: "daily",
+                source: "Local Contractor",
+                url: "#",
+                description: "Skilled construction worker needed for building project. Daily wage ₹500-600. Experience preferred. Safety gear provided."
+              },
+              {
+                title: "Mason - Residential Project",
+                company: "BuildRight Contractors",
+                location: "Sector 62, Noida",
+                jobType: "contract",
+                source: "Construction Agency",
+                url: "#",
+                description: "Experienced mason for house construction. Contract basis ₹600-800 per day. 2+ years experience required."
+              },
+              {
+                title: "Carpenter - Furniture Making",
+                company: "WoodCraft Solutions",
+                location: "Koramangala, Bangalore",
+                jobType: "weekly",
+                source: "Furniture Company",
+                url: "#",
+                description: "Skilled carpenter for custom furniture. Weekly payment ₹4200. Knowledge of modern tools preferred."
+              },
+              {
+                title: "Painter - Interior & Exterior",
+                company: "Perfect Paint Works",
+                location: "Jubilee Hills, Hyderabad",
+                jobType: "contract",
+                source: "Painting Contractor",
+                url: "#",
+                description: "Professional painter for residential and commercial projects. Project based payment ₹400-500 per day. Tools provided."
+              },
+              {
+                title: "Electrician - Residential Wiring",
+                company: "PowerFix Solutions",
+                location: "Bandra, Mumbai",
+                jobType: "daily",
+                source: "Electrical Contractor",
+                url: "#",
+                description: "Licensed electrician for house wiring and maintenance. Daily wage ₹600-750. Safety certification required."
+              },
+
+              // Housekeeping & Domestic Jobs
+              {
+                title: "House Maid - Full Time",
+                company: "CleanCare Services",
+                location: "Sector 15, Noida",
+                jobType: "weekly",
+                source: "Domestic Agency",
+                url: "#",
+                description: "Reliable house maid for daily cleaning. 4 hours daily. Weekly payment ₹2000. References required."
+              },
+              {
+                title: "Cook - Home Kitchen",
+                company: "HomeCook Services",
+                location: "Jayanagar, Bangalore",
+                jobType: "daily",
+                source: "Domestic Help Agency",
+                url: "#",
+                description: "Experienced cook for Indian cuisine. Morning shift 2 hours. Daily wage ₹300-400. Vegetarian cooking preferred."
+              },
+              {
+                title: "Nanny - Child Care",
+                company: "CaringHands Agency",
+                location: "Banjara Hills, Hyderabad",
+                jobType: "weekly",
+                source: "Childcare Service",
+                url: "#",
+                description: "Caring nanny for toddler. 8 hours daily. Weekly payment ₹3500. Previous experience with children required."
+              },
+              {
+                title: "Elder Care Assistant",
+                company: "CompassionateCare",
+                location: "Vasant Kunj, Delhi",
+                jobType: "daily",
+                source: "Healthcare Agency",
+                url: "#",
+                description: "Patient care assistant for elderly. Day shift 12 hours. Daily wage ₹500-650. Basic medical training preferred."
+              },
+              {
+                title: "Office Cleaner - Night Shift",
+                company: "Spotless Cleaning Co.",
+                location: "Connaught Place, Delhi",
+                jobType: "daily",
+                source: "Cleaning Agency",
+                url: "#",
+                description: "Office cleaning staff for corporate building. Night shift 6 hours. Daily wage ₹350-450. Reliable attendance required."
+              },
+
+              // Security Jobs
+              {
+                title: "Security Guard - Residential",
+                company: "SecureGuard Solutions",
+                location: "Whitefield, Bangalore",
+                jobType: "contract",
+                source: "Security Agency",
+                url: "#",
+                description: "Security guard for residential complex. 12-hour shifts. Monthly salary ₹15000-18000. Basic training provided."
+              },
+              {
+                title: "Watchman - Night Duty",
+                company: "NightWatch Security",
+                location: "Viman Nagar, Pune",
+                jobType: "daily",
+                source: "Security Service",
+                url: "#",
+                description: "Night watchman for commercial building. 10 PM to 6 AM shift. Daily wage ₹400-500. Alert and reliable person needed."
+              },
+              {
+                title: "Mall Security - Day Shift",
+                company: "ShopSafe Security",
+                location: "Phoenix Mall, Chennai",
+                jobType: "weekly",
+                source: "Mall Management",
+                url: "#",
+                description: "Security personnel for shopping mall. Day shift 8 hours. Weekly payment ₹2800. Customer service skills preferred."
+              },
+
+              // Delivery & Transport Jobs
+              {
+                title: "Delivery Boy - Food & Groceries",
+                company: "FastTrack Delivery",
+                location: "Hadapsar, Pune",
+                jobType: "daily",
+                source: "Delivery Service",
+                url: "#",
+                description: "Food and grocery delivery with own vehicle. Flexible hours. Per delivery ₹30-50. Smartphone required."
+              },
+              {
+                title: "Auto Rickshaw Driver",
+                company: "CityRide Services",
+                location: "Malviya Nagar, Delhi",
+                jobType: "daily",
+                source: "Transport Service",
+                url: "#",
+                description: "Auto rickshaw driver for city rides. Own vehicle preferred. Daily earning ₹800-1200. Valid license required."
+              },
+              {
+                title: "Taxi Driver - App Based",
+                company: "RideEasy Cabs",
+                location: "Electronic City, Bangalore",
+                jobType: "weekly",
+                source: "Cab Service",
+                url: "#",
+                description: "Taxi driver for app-based bookings. Car provided or use own. Weekly earning ₹5000-7000. Clean driving record required."
+              },
+              {
+                title: "Goods Vehicle Driver",
+                company: "LogiMove Transport",
+                location: "Sector 18, Gurgaon",
+                jobType: "daily",
+                source: "Transport Company",
+                url: "#",
+                description: "Driver for goods transportation. Light commercial vehicle. Daily wages ₹600-800. Valid commercial license required."
+              },
+              {
+                title: "Courier Delivery Executive",
+                company: "ExpressPost Services",
+                location: "Andheri East, Mumbai",
+                jobType: "daily",
+                source: "Courier Company",
+                url: "#",
+                description: "Courier delivery for documents and packages. Two-wheeler required. Daily wage ₹450-600. Knowledge of city routes preferred."
+              },
+
+              // Restaurant & Food Service
+              {
+                title: "Cook - Restaurant Kitchen",
+                company: "Spice Garden Restaurant",
+                location: "T. Nagar, Chennai",
+                jobType: "weekly",
+                source: "Restaurant",
+                url: "#",
+                description: "Experienced cook for South Indian cuisine. Full-time position. Weekly salary ₹3500-4000. Accommodation available."
+              },
+              {
+                title: "Kitchen Helper - Hotel",
+                company: "Grand Plaza Hotel",
+                location: "MG Road, Bangalore",
+                jobType: "daily",
+                source: "Hotel",
+                url: "#",
+                description: "Kitchen assistant for food preparation. Day shift 8 hours. Daily wage ₹350-450. Food and uniform provided."
+              },
+              {
+                title: "Waiter - Restaurant Service",
+                company: "Urban Dhaba",
+                location: "Cyber City, Gurgaon",
+                jobType: "daily",
+                source: "Restaurant",
+                url: "#",
+                description: "Waiter for busy restaurant. Evening shift 6 hours. Daily wage ₹400-500 plus tips. Customer service experience preferred."
+              },
+              {
+                title: "Street Food Vendor Assistant",
+                company: "Tasty Bites Stall",
+                location: "Chandni Chowk, Delhi",
+                jobType: "daily",
+                source: "Food Vendor",
+                url: "#",
+                description: "Assistant for street food preparation and serving. Morning to evening. Daily wage ₹300-400. Energetic person needed."
+              },
+
+              // Maintenance & Repair
+              {
+                title: "Plumber - Emergency Service",
+                company: "QuickFix Plumbing",
+                location: "Hitech City, Hyderabad",
+                jobType: "contract",
+                source: "Plumbing Service",
+                url: "#",
+                description: "Plumber for residential and commercial repairs. On-call basis. Per job ₹200-800. Own tools preferred. 24/7 availability."
+              },
+              {
+                title: "AC Technician - Installation",
+                company: "CoolAir Services",
+                location: "Thane, Mumbai",
+                jobType: "daily",
+                source: "AC Service",
+                url: "#",
+                description: "AC installation and repair technician. Daily wage ₹600-900. Technical training certificate preferred. Summer bonus available."
+              },
+              {
+                title: "Mobile Repair Technician",
+                company: "FixPhone Center",
+                location: "Commercial Street, Bangalore",
+                jobType: "weekly",
+                source: "Repair Shop",
+                url: "#",
+                description: "Mobile phone repair specialist. Weekly salary ₹3000-4000. Knowledge of Android and iPhone repair required."
+              },
+              {
+                title: "Bike Mechanic - Two Wheeler",
+                company: "SpeedFix Garage",
+                location: "Kothrud, Pune",
+                jobType: "daily",
+                source: "Auto Garage",
+                url: "#",
+                description: "Two-wheeler mechanic for repairs and servicing. Daily wage ₹500-700. Experience with all brands preferred."
+              },
+
+              // Gardening & Landscaping
+              {
+                title: "Gardener - Residential Society",
+                company: "Green Thumb Services",
+                location: "Salt Lake, Kolkata",
+                jobType: "weekly",
+                source: "Maintenance Agency",
+                url: "#",
+                description: "Gardener for residential society maintenance. Weekly payment ₹1500-2000. Plant care and landscaping experience needed."
+              },
+              {
+                title: "Landscaper - Corporate Office",
+                company: "EcoGreen Landscapes",
+                location: "Baner, Pune",
+                jobType: "contract",
+                source: "Landscaping Company",
+                url: "#",
+                description: "Landscaper for corporate office complex. Project basis. Daily wage ₹450-600. Knowledge of ornamental plants preferred."
+              },
+              {
+                title: "Farm Worker - Vegetable Farming",
+                company: "Fresh Fields Farm",
+                location: "Outskirts of Chennai",
+                jobType: "daily",
+                source: "Agricultural Farm",
+                url: "#",
+                description: "Farm worker for vegetable cultivation. Morning shift 6 hours. Daily wage ₹250-350. Agricultural experience preferred."
+              },
+
+              // Warehouse & Factory
+              {
+                title: "Warehouse Helper - Loading",
+                company: "StorageMax Logistics",
+                location: "Taloja, Navi Mumbai",
+                jobType: "weekly",
+                source: "Logistics Company",
+                url: "#",
+                description: "Warehouse assistant for loading and unloading goods. Weekly payment ₹2800-3200. Physical fitness required."
+              },
+              {
+                title: "Factory Worker - Manufacturing",
+                company: "TechManu Industries",
+                location: "Hosur Road, Bangalore",
+                jobType: "daily",
+                source: "Manufacturing Unit",
+                url: "#",
+                description: "Factory worker for assembly line work. Day shift 8 hours. Daily wage ₹400-550. Basic technical skills preferred."
+              },
+              {
+                title: "Packaging Assistant",
+                company: "PackWell Solutions",
+                location: "Sector 59, Noida",
+                jobType: "daily",
+                source: "Packaging Company",
+                url: "#",
+                description: "Packaging and labeling assistant. Full-time. Daily wage ₹350-450. Attention to detail required."
+              },
+
+              // Cleaning & Sanitation
+              {
+                title: "Sanitation Worker - Public Areas",
+                company: "CleanCity Corporation",
+                location: "Various locations, Delhi",
+                jobType: "daily",
+                source: "Municipal Corporation",
+                url: "#",
+                description: "Sanitation worker for public area cleaning. Early morning shift. Daily wage ₹300-400. Health insurance provided."
+              },
+              {
+                title: "Hospital Cleaner - Healthcare",
+                company: "MediClean Services",
+                location: "Apollo Hospital, Chennai",
+                jobType: "weekly",
+                source: "Healthcare Cleaning",
+                url: "#",
+                description: "Hospital cleaning with hygiene protocols. Weekly payment ₹2500. Health checkup and training provided."
+              },
+              {
+                title: "Carpet Cleaner - Professional",
+                company: "DeepClean Specialists",
+                location: "Jubilee Hills, Hyderabad",
+                jobType: "contract",
+                source: "Cleaning Service",
+                url: "#",
+                description: "Professional carpet and upholstery cleaning. Per job basis ₹500-1000. Training on equipment provided."
+              },
+
+              // Miscellaneous Blue Collar Jobs
+              {
+                title: "Tailor - Garment Stitching",
+                company: "Fashion Craft Tailors",
+                location: "Karol Bagh, Delhi",
+                jobType: "weekly",
+                source: "Tailoring Shop",
+                url: "#",
+                description: "Experienced tailor for custom garments. Weekly payment ₹3000-4000. Knowledge of modern stitching techniques preferred."
+              },
+              {
+                title: "Barber - Hair Cutting",
+                company: "Style Cut Salon",
+                location: "FC Road, Pune",
+                jobType: "daily",
+                source: "Salon",
+                url: "#",
+                description: "Professional barber for men's salon. Daily wage ₹400-600 plus tips. Modern hair cutting skills required."
+              },
+              {
+                title: "Laundry Worker - Dry Cleaning",
+                company: "Fresh Wash Laundry",
+                location: "T Nagar, Chennai",
+                jobType: "daily",
+                source: "Laundry Service",
+                url: "#",
+                description: "Laundry worker for washing and ironing. Day shift 8 hours. Daily wage ₹350-450. Experience with dry cleaning preferred."
+              },
+              {
+                title: "Pet Groomer - Dog Spa",
+                company: "Pawsome Pet Care",
+                location: "Indiranagar, Bangalore",
+                jobType: "weekly",
+                source: "Pet Care Center",
+                url: "#",
+                description: "Pet groomer for dog bathing and styling. Weekly payment ₹2500-3500. Love for animals and patience required."
+              },
+              {
+                title: "Car Washer - Auto Service",
+                company: "Shine Auto Wash",
+                location: "Sector 21, Gurgaon",
+                jobType: "daily",
+                source: "Car Wash Center",
+                url: "#",
+                description: "Car washing and detailing service. Daily wage ₹300-450. Knowledge of car care products preferred."
+              },
+              {
+                title: "Event Helper - Setup & Cleanup",
+                company: "EventPro Organizers",
+                location: "Multiple locations, Mumbai",
+                jobType: "contract",
+                source: "Event Management",
+                url: "#",
+                description: "Event setup and cleanup assistant. Per event payment ₹500-800. Weekend availability required. Physical work involved."
+              }
+            ]
+          };
+          displayJobListings(sampleJobs);
+        }
+      } catch (error) {
+        console.error('Error loading initial jobs:', error);
+        document.getElementById('results-container').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-briefcase"></i>
+          <h3>Ready to find work?</h3>
+          <p>Use the search above to discover daily wage opportunities in your area.</p>
+        </div>
+      `;
+      } finally {
+        loadingDiv.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
 
 </html>

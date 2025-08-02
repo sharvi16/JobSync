@@ -12,21 +12,35 @@ class JobFetcherService {
     this.isRunning = false;
     this.lastRun = null;
     this.jobCategories = [
+      // Blue Collar / Manual Labor Jobs
+      'construction worker',
+      'house maid',
+      'security guard',
+      'delivery boy',
+      'cook',
+      'painter',
+      'electrician',
+      'plumber',
+      'driver',
+      'gardener',
+      'cleaner',
+      'warehouse helper',
+      'factory worker',
+      'carpenter',
+      'mason',
+      'auto rickshaw driver',
+      'nanny',
+      'watchman',
+      'ac technician',
+      'mobile repair technician',
+      'bike mechanic',
+      'barber',
+      'tailor',
+      'laundry worker',
+      // Tech Jobs (keeping some for diversity)
       'software developer',
       'web developer',
       'data scientist',
-      'product manager',
-      'ui/ux designer',
-      'devops engineer',
-      'mobile developer',
-      'full stack developer',
-      'frontend developer',
-      'backend developer',
-      'machine learning',
-      'cloud engineer',
-      'cybersecurity',
-      'business analyst',
-      'project manager',
     ];
   }
 
@@ -43,7 +57,7 @@ class JobFetcherService {
       },
       {
         scheduled: true,
-        timezone: 'America/New_York', // Adjust to your timezone
+        timezone: 'Asia/Kolkata',
       }
     );
 
@@ -53,14 +67,17 @@ class JobFetcherService {
       this.fetchAndStoreJobs();
     }
 
-    console.log('✅ Job Fetcher Service initialized successfully');
-    console.log('⏰ Next scheduled run: Daily at 2:00 AM');
+    console.log('Job Fetcher Service initialized successfully');
+    console.log('Next scheduled run: Daily at 2:00 AM (Asia/Kolkata timezone)');
+    console.log(
+      `Current time: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`
+    );
   }
 
   // Main function to fetch and store jobs
   async fetchAndStoreJobs() {
     if (this.isRunning) {
-      console.log('⚠️ Job fetching already in progress, skipping...');
+      console.log('Job fetching already in progress, skipping...');
       return;
     }
 
@@ -79,7 +96,7 @@ class JobFetcherService {
       // Fetch jobs for each category
       for (const category of this.jobCategories) {
         try {
-          console.log(`🔍 Fetching jobs for category: ${category}`);
+          console.log(`Fetching jobs for category: ${category}`);
           const jobs = await this.fetchJobsFromAPI(category);
 
           if (jobs && jobs.length > 0) {
@@ -87,16 +104,16 @@ class JobFetcherService {
             totalJobsFetched += jobs.length;
             totalJobsSaved += savedCount;
             console.log(
-              `✅ Category ${category}: Fetched ${jobs.length}, Saved ${savedCount} new jobs`
+              `Category ${category}: Fetched ${jobs.length}, Saved ${savedCount} new jobs`
             );
           } else {
-            console.log(`⚠️ No jobs found for category: ${category}`);
+            console.log(`No jobs found for category: ${category}`);
           }
 
           // Add delay between API calls to avoid rate limiting
           await this.delay(2000);
         } catch (error) {
-          console.error(`❌ Error fetching jobs for category ${category}:`, error.message);
+          console.error(`Error fetching jobs for category ${category}:`, error.message);
         }
       }
 
@@ -104,10 +121,10 @@ class JobFetcherService {
       const duration = (Date.now() - startTime) / 1000;
 
       console.log(
-        `🎉 Job fetch completed! Total fetched: ${totalJobsFetched}, New jobs saved: ${totalJobsSaved}, Duration: ${duration}s`
+        `Job fetch completed! Total fetched: ${totalJobsFetched}, New jobs saved: ${totalJobsSaved}, Duration: ${duration}s`
       );
     } catch (error) {
-      console.error('❌ Error in job fetching process:', error);
+      console.error('Error in job fetching process:', error);
     } finally {
       this.isRunning = false;
     }
@@ -120,19 +137,19 @@ class JobFetcherService {
       const engineId = process.env.GOOGLE_SEARCH_ENGINE_API;
 
       if (!apiKey || !engineId) {
-        console.log(`⚠️ Google API credentials not configured, using mock data for: ${searchTerm}`);
+        console.log(`Google API credentials not configured, using mock data for: ${searchTerm}`);
         return this.generateMockJobs(searchTerm);
       }
 
-      console.log(`🔑 Making API call for: ${searchTerm}`);
+      console.log(`Making API call for: ${searchTerm}`);
 
-      // Try multiple search strategies
+      // Try multiple search strategies - adapted for blue collar jobs
       const searchStrategies = [
         `${searchTerm} jobs`,
+        `${searchTerm} vacancy`,
         `${searchTerm} hiring`,
         `"${searchTerm}" job openings`,
-        `${searchTerm} position`,
-        `${searchTerm} career`,
+        `${searchTerm} work opportunity`,
       ];
 
       let allResults = [];
@@ -141,7 +158,7 @@ class JobFetcherService {
         const query = encodeURIComponent(searchStrategies[i]);
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${query}&num=10`;
 
-        console.log(`🌐 API URL (Strategy ${i + 1}): ${url.replace(apiKey, 'HIDDEN_KEY')}`);
+        console.log(`API URL (Strategy ${i + 1}): ${url.replace(apiKey, 'HIDDEN_KEY')}`);
 
         const response = await fetch(url);
 
@@ -155,7 +172,7 @@ class JobFetcherService {
         }
 
         const data = await response.json();
-        console.log(`📊 API Response for ${searchTerm} (Strategy ${i + 1}):`, {
+        console.log(`API Response for ${searchTerm} (Strategy ${i + 1}):`, {
           totalResults: data.searchInformation?.totalResults || 0,
           itemsFound: data.items?.length || 0,
           hasError: !!data.error,
@@ -163,14 +180,14 @@ class JobFetcherService {
         });
 
         if (data.error) {
-          console.error(`❌ Google API Error (Strategy ${i + 1}):`, data.error);
+          console.error(`Google API Error (Strategy ${i + 1}):`, data.error);
           continue;
         }
 
         if (data.items && data.items.length > 0) {
           allResults.push(...data.items);
           console.log(
-            `✅ Found ${data.items.length} results from API for: ${searchTerm} (Strategy ${i + 1})`
+            `Found ${data.items.length} results from API for: ${searchTerm} (Strategy ${i + 1})`
           );
           break; // Stop after first successful strategy
         }
@@ -180,23 +197,39 @@ class JobFetcherService {
       }
 
       if (allResults.length === 0) {
-        console.log(`🔄 No results from any API strategy for ${searchTerm}, generating mock data`);
+        console.log(`No results from any API strategy for ${searchTerm}, generating mock data`);
         return this.generateMockJobs(searchTerm);
       }
 
-      console.log(`✅ Total API results found for ${searchTerm}: ${allResults.length}`);
+      console.log(`Total API results found for ${searchTerm}: ${allResults.length}`);
       // Parse and structure the job data
       return allResults.slice(0, 10).map((item) => this.parseJobItem(item, searchTerm));
     } catch (error) {
-      console.error(`❌ Error fetching jobs for ${searchTerm}:`, error.message);
-      console.log(`🔄 Falling back to mock data for: ${searchTerm}`);
+      console.error(`Error fetching jobs for ${searchTerm}:`, error.message);
+      console.log(`Falling back to mock data for: ${searchTerm}`);
       return this.generateMockJobs(searchTerm);
     }
   }
 
   // Generate mock jobs when API is not available
   generateMockJobs(category) {
-    const companies = [
+    // Different company types for different job categories
+    const blueCollarCompanies = [
+      'HomeCare Services',
+      'QuickFix Solutions',
+      'SecureGuard Agency',
+      'FastTrack Delivery',
+      'BuildRight Contractors',
+      'CleanPro Services',
+      'CityRide Transport',
+      'FreshFood Restaurant',
+      'GreenThumb Landscaping',
+      'SafeWatch Security',
+      'ExpressMove Logistics',
+      'SkillCraft Workshop',
+    ];
+
+    const techCompanies = [
       'TechCorp',
       'InnovateLabs',
       'StartupX',
@@ -204,7 +237,27 @@ class JobFetcherService {
       'CodeCraft',
       'DevCompany',
     ];
-    const locations = [
+
+    // Indian cities and areas for blue collar jobs
+    const indianLocations = [
+      'Andheri, Mumbai',
+      'Sector 15, Noida',
+      'Koramangala, Bangalore',
+      'T. Nagar, Chennai',
+      'Banjara Hills, Hyderabad',
+      'Connaught Place, Delhi',
+      'Salt Lake, Kolkata',
+      'Hadapsar, Pune',
+      'Whitefield, Bangalore',
+      'Viman Nagar, Pune',
+      'Thane, Mumbai',
+      'Sector 18, Gurgaon',
+      'Electronic City, Bangalore',
+      'Malviya Nagar, Delhi',
+      'Jubilee Hills, Hyderabad',
+    ];
+
+    const usLocations = [
       'New York, NY',
       'San Francisco, CA',
       'Austin, TX',
@@ -212,25 +265,87 @@ class JobFetcherService {
       'Remote',
       'Boston, MA',
     ];
-    const jobTypes = ['full-time', 'part-time', 'contract', 'remote'];
+
+    // Job types for blue collar vs tech jobs
+    const blueCollarJobTypes = ['daily', 'weekly', 'contract', 'part-time'];
+    const techJobTypes = ['full-time', 'part-time', 'contract', 'remote'];
 
     const skillsMap = {
+      // Blue Collar Skills
+      'construction worker': [
+        'Manual Labor',
+        'Safety Protocols',
+        'Tool Handling',
+        'Physical Fitness',
+      ],
+      'house maid': ['Cleaning', 'Organization', 'Housekeeping', 'Time Management'],
+      'security guard': ['Security Protocols', 'Surveillance', 'Communication', 'Alert Monitoring'],
+      'delivery boy': ['Vehicle Operation', 'Navigation', 'Customer Service', 'Time Management'],
+      cook: ['Indian Cuisine', 'Food Safety', 'Kitchen Management', 'Recipe Following'],
+      painter: ['Wall Painting', 'Color Mixing', 'Surface Preparation', 'Tool Maintenance'],
+      electrician: [
+        'Electrical Wiring',
+        'Safety Protocols',
+        'Circuit Installation',
+        'Troubleshooting',
+      ],
+      plumber: ['Pipe Installation', 'Leak Repair', 'Drainage Systems', 'Tool Usage'],
+      driver: ['Safe Driving', 'Route Knowledge', 'Vehicle Maintenance', 'Customer Service'],
+      gardener: ['Plant Care', 'Landscaping', 'Irrigation', 'Garden Maintenance'],
+      cleaner: ['Deep Cleaning', 'Sanitation', 'Equipment Operation', 'Chemical Safety'],
+      'warehouse helper': [
+        'Loading/Unloading',
+        'Inventory Management',
+        'Physical Fitness',
+        'Safety',
+      ],
+      'factory worker': [
+        'Assembly Line',
+        'Quality Control',
+        'Machine Operation',
+        'Safety Protocols',
+      ],
+      carpenter: ['Wood Working', 'Furniture Making', 'Tool Usage', 'Measurement'],
+      mason: ['Brick Laying', 'Cement Work', 'Construction', 'Measurement'],
+      'auto rickshaw driver': [
+        'Three Wheeler Driving',
+        'Route Knowledge',
+        'Customer Service',
+        'Vehicle Maintenance',
+      ],
+      nanny: ['Child Care', 'Safety Awareness', 'Activity Planning', 'Communication'],
+      watchman: ['Night Security', 'Patrol Duties', 'Emergency Response', 'Vigilance'],
+      'ac technician': [
+        'AC Installation',
+        'Repair Work',
+        'Technical Knowledge',
+        'Customer Service',
+      ],
+      'mobile repair technician': [
+        'Mobile Repair',
+        'Component Replacement',
+        'Diagnosis',
+        'Customer Service',
+      ],
+      'bike mechanic': ['Two Wheeler Repair', 'Engine Knowledge', 'Tool Usage', 'Customer Service'],
+      barber: ['Hair Cutting', 'Styling', 'Customer Service', 'Hygiene'],
+      tailor: ['Stitching', 'Measurement', 'Pattern Making', 'Customer Service'],
+      'laundry worker': ['Washing', 'Ironing', 'Stain Removal', 'Customer Service'],
+
+      // Tech Skills (keeping some)
       'software developer': ['JavaScript', 'Python', 'Java', 'React', 'Node.js', 'SQL'],
       'web developer': ['HTML', 'CSS', 'JavaScript', 'React', 'Vue.js', 'Angular'],
       'data scientist': ['Python', 'R', 'SQL', 'Machine Learning', 'TensorFlow', 'Pandas'],
-      'product manager': ['Agile', 'Scrum', 'Analytics', 'Roadmapping', 'SQL', 'Jira'],
-      'ui/ux designer': ['Figma', 'Adobe XD', 'Sketch', 'Prototyping', 'User Research'],
-      'devops engineer': ['Docker', 'Kubernetes', 'AWS', 'Jenkins', 'Terraform', 'Linux'],
-      'mobile developer': ['React Native', 'Flutter', 'Swift', 'Kotlin', 'iOS', 'Android'],
-      'full stack developer': ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Express', 'SQL'],
-      'frontend developer': ['JavaScript', 'React', 'Vue.js', 'CSS', 'HTML', 'TypeScript'],
-      'backend developer': ['Node.js', 'Python', 'Java', 'SQL', 'MongoDB', 'Express'],
-      'machine learning': ['Python', 'TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas', 'NumPy'],
-      'cloud engineer': ['AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes', 'Terraform'],
-      cybersecurity: ['Security', 'Penetration Testing', 'CISSP', 'Network Security'],
-      'business analyst': ['SQL', 'Excel', 'Tableau', 'Business Intelligence', 'Analytics'],
-      'project manager': ['Agile', 'Scrum', 'PMP', 'Jira', 'Project Planning', 'Leadership'],
     };
+
+    // Determine if this is a blue collar or tech job
+    const isBlueCollar = !['software developer', 'web developer', 'data scientist'].includes(
+      category
+    );
+
+    const companies = isBlueCollar ? blueCollarCompanies : techCompanies;
+    const locations = isBlueCollar ? indianLocations : usLocations;
+    const jobTypes = isBlueCollar ? blueCollarJobTypes : techJobTypes;
 
     const mockJobs = [];
     const numJobs = Math.floor(Math.random() * 8) + 3; // 3-10 jobs
@@ -239,16 +354,25 @@ class JobFetcherService {
       const company = companies[Math.floor(Math.random() * companies.length)];
       const location = locations[Math.floor(Math.random() * locations.length)];
       const jobType = jobTypes[Math.floor(Math.random() * jobTypes.length)];
-      const skills = skillsMap[category] || ['JavaScript', 'Python', 'SQL'];
-      const selectedSkills = skills.slice(0, Math.floor(Math.random() * 4) + 2);
+      const skills = skillsMap[category] || ['Basic Skills', 'Communication'];
+      const selectedSkills = skills.slice(0, Math.floor(Math.random() * 3) + 2);
+
+      // Generate different descriptions for blue collar vs tech jobs
+      let description;
+      if (isBlueCollar) {
+        const wageInfo = this.generateWageInfo(category, jobType);
+        description = `We are hiring a reliable ${category} to join our team at ${company}. ${wageInfo}. The ideal candidate should have experience with ${selectedSkills.join(', ')} and be hardworking and dependable. ${this.getJobSpecificRequirements(category)}`;
+      } else {
+        description = `We are looking for a talented ${category} to join our team at ${company}. You will work on exciting projects and contribute to innovative solutions. The ideal candidate should have experience with ${selectedSkills.join(', ')} and be passionate about technology.`;
+      }
 
       mockJobs.push({
         title: `${this.capitalizeWords(category)} - ${company}`,
         company: company,
         location: location,
-        description: `We are looking for a talented ${category} to join our team at ${company}. You will work on exciting projects and contribute to innovative solutions. The ideal candidate should have experience with ${selectedSkills.join(', ')} and be passionate about technology.`,
-        url: `https://example.com/jobs/${company.toLowerCase()}-${category.replace(/\s+/g, '-')}-${i + 1}`,
-        source: 'MockData',
+        description: description,
+        url: `https://example.com/jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
+        source: isBlueCollar ? 'Local Agency' : 'TechJobs',
         jobType: jobType,
         skills: selectedSkills,
         category: category,
@@ -259,6 +383,90 @@ class JobFetcherService {
     }
 
     return mockJobs;
+  }
+
+  // Generate wage information for blue collar jobs
+  generateWageInfo(category, jobType) {
+    const wageRanges = {
+      'construction worker': { daily: '₹500-600', weekly: '₹3500-4200', contract: '₹15000-20000' },
+      'house maid': { daily: '₹300-400', weekly: '₹2000-2800', contract: '₹8000-12000' },
+      'security guard': { daily: '₹400-500', weekly: '₹2800-3500', contract: '₹15000-18000' },
+      'delivery boy': { daily: '₹450-600', weekly: '₹3000-4000', contract: '₹12000-16000' },
+      cook: { daily: '₹400-550', weekly: '₹2800-3850', contract: '₹12000-18000' },
+      painter: { daily: '₹500-700', weekly: '₹3500-4900', contract: '₹15000-22000' },
+      electrician: { daily: '₹600-800', weekly: '₹4200-5600', contract: '₹18000-25000' },
+      plumber: { daily: '₹500-750', weekly: '₹3500-5250', contract: '₹16000-23000' },
+      driver: { daily: '₹600-900', weekly: '₹4200-6300', contract: '₹18000-28000' },
+      gardener: { daily: '₹300-450', weekly: '₹2100-3150', contract: '₹10000-15000' },
+      cleaner: { daily: '₹300-450', weekly: '₹2100-3150', contract: '₹9000-14000' },
+      'warehouse helper': { daily: '₹400-550', weekly: '₹2800-3850', contract: '₹12000-18000' },
+      'factory worker': { daily: '₹450-650', weekly: '₹3150-4550', contract: '₹14000-20000' },
+      carpenter: { daily: '₹600-850', weekly: '₹4200-5950', contract: '₹18000-26000' },
+      mason: { daily: '₹550-750', weekly: '₹3850-5250', contract: '₹16000-23000' },
+      'auto rickshaw driver': {
+        daily: '₹700-1200',
+        weekly: '₹4900-8400',
+        contract: '₹20000-35000',
+      },
+      nanny: { daily: '₹500-700', weekly: '₹3500-4900', contract: '₹15000-22000' },
+      watchman: { daily: '₹350-500', weekly: '₹2450-3500', contract: '₹12000-18000' },
+      'ac technician': { daily: '₹700-1000', weekly: '₹4900-7000', contract: '₹20000-30000' },
+      'mobile repair technician': {
+        daily: '₹500-800',
+        weekly: '₹3500-5600',
+        contract: '₹15000-25000',
+      },
+      'bike mechanic': { daily: '₹500-750', weekly: '₹3500-5250', contract: '₹15000-23000' },
+      barber: { daily: '₹400-650', weekly: '₹2800-4550', contract: '₹12000-20000' },
+      tailor: { daily: '₹450-700', weekly: '₹3150-4900', contract: '₹14000-22000' },
+      'laundry worker': { daily: '₹350-500', weekly: '₹2450-3500', contract: '₹10000-16000' },
+    };
+
+    const wages = wageRanges[category];
+    if (!wages) return 'Competitive wages based on experience';
+
+    const wageText =
+      jobType === 'daily'
+        ? 'Daily wage'
+        : jobType === 'weekly'
+          ? 'Weekly payment'
+          : jobType === 'contract'
+            ? 'Monthly salary'
+            : 'Payment';
+
+    return `${wageText}: ${wages[jobType] || wages.daily}`;
+  }
+
+  // Get job-specific requirements
+  getJobSpecificRequirements(category) {
+    const requirements = {
+      'construction worker': 'Safety gear will be provided. Physical fitness required.',
+      'house maid': 'References required. Flexible working hours.',
+      'security guard': 'Basic training will be provided. Night shifts available.',
+      'delivery boy': 'Own vehicle preferred. Smartphone required.',
+      cook: 'Knowledge of local cuisine preferred. Accommodation may be available.',
+      painter: 'Own tools preferred but not mandatory.',
+      electrician: 'Valid electrical license required. Safety certification preferred.',
+      plumber: 'Own tools preferred. Emergency call availability.',
+      driver: 'Valid driving license required. Clean driving record.',
+      gardener: 'Plant care experience needed. Weekend work required.',
+      cleaner: 'Flexible timing. Health checkup may be required.',
+      'warehouse helper': 'Physical fitness required. Day and night shifts available.',
+      'factory worker': 'Basic technical skills preferred. Training provided.',
+      carpenter: 'Experience with modern tools preferred.',
+      mason: '2+ years experience required.',
+      'auto rickshaw driver': 'Own vehicle preferred. Knowledge of city routes.',
+      nanny: 'Previous experience with children required.',
+      watchman: 'Night shift work. Alert and reliable person needed.',
+      'ac technician': 'Technical training certificate preferred.',
+      'mobile repair technician': 'Knowledge of smartphone repair required.',
+      'bike mechanic': 'Experience with all brands preferred.',
+      barber: 'Modern hair cutting skills required.',
+      tailor: 'Knowledge of modern stitching techniques preferred.',
+      'laundry worker': 'Experience with dry cleaning preferred.',
+    };
+
+    return requirements[category] || 'Experience preferred but not mandatory.';
   }
 
   // Helper function to capitalize words
@@ -338,9 +546,14 @@ class JobFetcherService {
   extractJobType(snippet, title) {
     const text = (snippet + ' ' + title).toLowerCase();
 
-    if (text.includes('full-time') || text.includes('full time')) return 'full-time';
-    if (text.includes('part-time') || text.includes('part time')) return 'part-time';
+    // Blue collar job types
+    if (text.includes('daily wage') || text.includes('daily pay')) return 'daily';
+    if (text.includes('weekly') || text.includes('weekly payment')) return 'weekly';
     if (text.includes('contract') || text.includes('contractor')) return 'contract';
+    if (text.includes('part-time') || text.includes('part time')) return 'part-time';
+
+    // Tech job types
+    if (text.includes('full-time') || text.includes('full time')) return 'full-time';
     if (text.includes('intern') || text.includes('internship')) return 'internship';
     if (text.includes('remote')) return 'remote';
 
@@ -350,7 +563,69 @@ class JobFetcherService {
   // Helper function to extract skills
   extractSkills(snippet, title) {
     const text = (snippet + ' ' + title).toLowerCase();
-    const skillKeywords = [
+
+    // Blue collar skill keywords
+    const blueCollarSkills = [
+      'manual labor',
+      'physical fitness',
+      'safety protocols',
+      'tool handling',
+      'cleaning',
+      'housekeeping',
+      'organization',
+      'time management',
+      'security',
+      'surveillance',
+      'communication',
+      'customer service',
+      'driving',
+      'navigation',
+      'vehicle maintenance',
+      'delivery',
+      'cooking',
+      'food safety',
+      'kitchen management',
+      'indian cuisine',
+      'painting',
+      'color mixing',
+      'surface preparation',
+      'wall painting',
+      'electrical',
+      'wiring',
+      'circuit installation',
+      'troubleshooting',
+      'plumbing',
+      'pipe installation',
+      'leak repair',
+      'drainage',
+      'gardening',
+      'plant care',
+      'landscaping',
+      'irrigation',
+      'construction',
+      'brick laying',
+      'cement work',
+      'carpentry',
+      'wood working',
+      'furniture making',
+      'measurement',
+      'child care',
+      'safety awareness',
+      'activity planning',
+      'repair work',
+      'technical knowledge',
+      'diagnosis',
+      'hair cutting',
+      'styling',
+      'hygiene',
+      'stitching',
+      'washing',
+      'ironing',
+      'stain removal',
+    ];
+
+    // Tech skill keywords (keeping some)
+    const techSkills = [
       'javascript',
       'python',
       'java',
@@ -373,7 +648,8 @@ class JobFetcherService {
       'ai',
     ];
 
-    return skillKeywords.filter((skill) => text.includes(skill));
+    const allSkills = [...blueCollarSkills, ...techSkills];
+    return allSkills.filter((skill) => text.includes(skill));
   }
 
   // Helper function to clean job title
@@ -390,7 +666,13 @@ class JobFetcherService {
     if (url.includes('linkedin.com')) return 'LinkedIn';
     if (url.includes('indeed.com')) return 'Indeed';
     if (url.includes('glassdoor.com')) return 'Glassdoor';
-    return 'Other';
+    if (url.includes('naukri.com')) return 'Naukri';
+    if (url.includes('shine.com')) return 'Shine';
+    if (url.includes('monster.com')) return 'Monster';
+    if (url.includes('timejobs.com')) return 'TimesJobs';
+    if (url.includes('quikr.com')) return 'Quikr';
+    if (url.includes('olx.in')) return 'OLX';
+    return 'Job Portal';
   }
 
   // Save jobs to database
@@ -508,7 +790,7 @@ class JobFetcherService {
 
   // Manual trigger for testing
   async manualFetch() {
-    console.log('🔧 Manual job fetch triggered');
+    console.log('Manual job fetch triggered');
     await this.fetchAndStoreJobs();
   }
 

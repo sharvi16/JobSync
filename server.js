@@ -153,6 +153,19 @@ app.get('/', optionalAuth, (req, res) => {
 // Auth routes from auth.routes.js
 app.use('/', authRouter);
 app.use('/api/jobs', jobRouter);
+
+// Manual job fetch trigger for development/testing
+app.get('/api/fetch-jobs', async (req, res) => {
+  try {
+    console.log('🔧 Manual job fetch triggered via API');
+    await jobFetcher.manualFetch();
+    res.json({ success: true, message: 'Job fetch started successfully' });
+  } catch (error) {
+    console.error('❌ Manual fetch error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === PROXY EXTERNAL API TO BYPASS CORS ===
 app.get('/api/totalusers', async (req, res) => {
   try {
@@ -236,10 +249,10 @@ app.listen(PORT, async () => {
 
   // Initialize job fetcher service after server starts
   try {
-    await jobFetcher.init();
-    console.log('✅ Job Fetcher Service started successfully');
+    await jobFetcher.init(false); // Pass false to only schedule cron job, no immediate fetch
+    console.log('Job Fetcher Service started successfully');
   } catch (error) {
-    console.error('❌ Failed to start Job Fetcher Service:', error);
+    console.error('Failed to start Job Fetcher Service:', error);
   }
 });
 

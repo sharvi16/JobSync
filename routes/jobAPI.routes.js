@@ -1,6 +1,7 @@
 const express = require('express');
 const { optionalAuth } = require('../middleware/auth.middleware.js');
 const jobFetcher = require('../services/jobFetcher.js');
+const Job = require('../models/job.js');
 
 const jobRouter = express.Router();
 
@@ -17,6 +18,7 @@ jobRouter.get('/', async (req, res) => {
     };
 
     const result = await jobFetcher.getJobs(filters);
+    // console.log("result inside of jobAPI(/api/jobs) route: ",result);
     res.json({
       success: true,
       data: result.jobs,
@@ -66,7 +68,7 @@ jobRouter.get('/locations', async (req, res) => {
   }
 });
 
-// Get job fetcher status (admin only)
+// Get job fetcher status
 jobRouter.get('/status', optionalAuth, async (req, res) => {
   try {
     const status = jobFetcher.getStatus();
@@ -88,7 +90,7 @@ jobRouter.get('/status', optionalAuth, async (req, res) => {
   }
 });
 
-// Manual job fetch trigger (admin only)
+// Manual job fetch trigger
 jobRouter.post('/fetch', optionalAuth, async (req, res) => {
   try {
     jobFetcher.manualFetch();

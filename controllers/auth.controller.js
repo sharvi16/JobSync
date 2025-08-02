@@ -371,7 +371,6 @@ const resendVerificationController = async (req, res) => {
 const dashboardController = async (req, res) => {
   try {
     const user = req.user;
-    console.log('user inside of dashboard controller: ', user);
 
     if (!user) {
       console.log('No user found in dashboard controller');

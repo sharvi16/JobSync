@@ -154,17 +154,6 @@ app.get('/', optionalAuth, (req, res) => {
 app.use('/', authRouter);
 app.use('/api/jobs', jobRouter);
 
-// Manual job fetch trigger for development/testing
-app.get('/api/fetch-jobs', async (req, res) => {
-  try {
-    console.log('🔧 Manual job fetch triggered via API');
-    await jobFetcher.manualFetch();
-    res.json({ success: true, message: 'Job fetch started successfully' });
-  } catch (error) {
-    console.error('❌ Manual fetch error:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 // === PROXY EXTERNAL API TO BYPASS CORS ===
 app.get('/api/totalusers', async (req, res) => {

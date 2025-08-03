@@ -28,7 +28,7 @@ const registerUserController = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'user',
+      role: 'user',
     });
 
     if (!newUser) {

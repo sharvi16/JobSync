@@ -37,7 +37,6 @@ class JobFetcherService {
       'barber',
       'tailor',
       'laundry worker',
-      // Tech Jobs (keeping some for diversity)
       'software developer',
       'web developer',
       'data scientist',
@@ -385,57 +384,6 @@ class JobFetcherService {
     return mockJobs;
   }
 
-  // Generate wage information for blue collar jobs
-  generateWageInfo(category, jobType) {
-    const wageRanges = {
-      'construction worker': { daily: '₹500-600', weekly: '₹3500-4200', contract: '₹15000-20000' },
-      'house maid': { daily: '₹300-400', weekly: '₹2000-2800', contract: '₹8000-12000' },
-      'security guard': { daily: '₹400-500', weekly: '₹2800-3500', contract: '₹15000-18000' },
-      'delivery boy': { daily: '₹450-600', weekly: '₹3000-4000', contract: '₹12000-16000' },
-      cook: { daily: '₹400-550', weekly: '₹2800-3850', contract: '₹12000-18000' },
-      painter: { daily: '₹500-700', weekly: '₹3500-4900', contract: '₹15000-22000' },
-      electrician: { daily: '₹600-800', weekly: '₹4200-5600', contract: '₹18000-25000' },
-      plumber: { daily: '₹500-750', weekly: '₹3500-5250', contract: '₹16000-23000' },
-      driver: { daily: '₹600-900', weekly: '₹4200-6300', contract: '₹18000-28000' },
-      gardener: { daily: '₹300-450', weekly: '₹2100-3150', contract: '₹10000-15000' },
-      cleaner: { daily: '₹300-450', weekly: '₹2100-3150', contract: '₹9000-14000' },
-      'warehouse helper': { daily: '₹400-550', weekly: '₹2800-3850', contract: '₹12000-18000' },
-      'factory worker': { daily: '₹450-650', weekly: '₹3150-4550', contract: '₹14000-20000' },
-      carpenter: { daily: '₹600-850', weekly: '₹4200-5950', contract: '₹18000-26000' },
-      mason: { daily: '₹550-750', weekly: '₹3850-5250', contract: '₹16000-23000' },
-      'auto rickshaw driver': {
-        daily: '₹700-1200',
-        weekly: '₹4900-8400',
-        contract: '₹20000-35000',
-      },
-      nanny: { daily: '₹500-700', weekly: '₹3500-4900', contract: '₹15000-22000' },
-      watchman: { daily: '₹350-500', weekly: '₹2450-3500', contract: '₹12000-18000' },
-      'ac technician': { daily: '₹700-1000', weekly: '₹4900-7000', contract: '₹20000-30000' },
-      'mobile repair technician': {
-        daily: '₹500-800',
-        weekly: '₹3500-5600',
-        contract: '₹15000-25000',
-      },
-      'bike mechanic': { daily: '₹500-750', weekly: '₹3500-5250', contract: '₹15000-23000' },
-      barber: { daily: '₹400-650', weekly: '₹2800-4550', contract: '₹12000-20000' },
-      tailor: { daily: '₹450-700', weekly: '₹3150-4900', contract: '₹14000-22000' },
-      'laundry worker': { daily: '₹350-500', weekly: '₹2450-3500', contract: '₹10000-16000' },
-    };
-
-    const wages = wageRanges[category];
-    if (!wages) return 'Competitive wages based on experience';
-
-    const wageText =
-      jobType === 'daily'
-        ? 'Daily wage'
-        : jobType === 'weekly'
-          ? 'Weekly payment'
-          : jobType === 'contract'
-            ? 'Monthly salary'
-            : 'Payment';
-
-    return `${wageText}: ${wages[jobType] || wages.daily}`;
-  }
 
   // Get job-specific requirements
   getJobSpecificRequirements(category) {
@@ -624,7 +572,7 @@ class JobFetcherService {
       'stain removal',
     ];
 
-    // Tech skill keywords (keeping some)
+    // Tech skill keywords
     const techSkills = [
       'javascript',
       'python',

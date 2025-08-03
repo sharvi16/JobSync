@@ -7,6 +7,35 @@ const bcrypt = require('bcrypt');
 
 dotenv.config(); //env
 
+const googleAuthController = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const tkn = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h',
+      }
+    );
+
+    res.cookie('token', tkn, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    req.flash('success', `Welcome back, ${user.name}!`);
+    res.redirect('/');
+  } catch (error) {
+    console.error('Google Auth Callback Error:', err);
+    req.flash('error', 'Authentication failed. Please try again.');
+    return res.redirect('/login');
+  }
+    
+  }
+
 const registerUserController = async (req, res) => {
   const { name, email, password, role } = req.body;
   try {
@@ -385,6 +414,7 @@ const dashboardController = async (req, res) => {
 };
 
 module.exports = {
+  googleAuthController,
   registerUserController,
   verificationController,
   loginController,

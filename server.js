@@ -15,6 +15,8 @@ const User = require('./models/user.js');
 const Contact = require('./models/contact.js');
 const authRouter = require('./routes/auth.routes.js');
 const { optionalAuth } = require('./middleware/auth.middleware.js');
+const passport = require('passport');
+require('./utils/passport.js');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -46,7 +48,7 @@ main();
 const allowedOrigins = [
   'https://jobsync-new.onrender.com',
   'https://jobsyncc.netlify.app',
-  'http://localhost:3000',
+  'http://localhost:5000',
 ];
 
 // ========== MIDDLEWARE ==========
@@ -89,6 +91,9 @@ app.use(
     },
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Initialize flash middleware
 app.use(flash());
@@ -144,7 +149,7 @@ app.use(generalRateLimit);
 
 // Homepage
 app.get('/', optionalAuth, (req, res) => {
-  res.render('index.ejs');
+  res.render('index.ejs',{ user: req.user });
 });
 
 // Auth routes from auth.routes.js

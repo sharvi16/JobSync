@@ -149,7 +149,7 @@ app.use(generalRateLimit);
 
 // Homepage
 app.get('/', optionalAuth, (req, res) => {
-  res.render('index.ejs',{ user: req.user });
+  res.render('index.ejs');
 });
 
 // Auth routes from auth.routes.js

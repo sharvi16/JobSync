@@ -21,15 +21,15 @@ const googleAuthController = async (req, res) => {
 
     res.cookie('token', tkn, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     req.flash('success', `Welcome back, ${user.name}!`);
     res.redirect('/');
   } catch (error) {
-    console.error('Google Auth Callback Error:', err);
+    console.error('Google Auth Callback Error:', error);
     req.flash('error', 'Authentication failed. Please try again.');
     return res.redirect('/login');
   }
@@ -133,8 +133,8 @@ const verificationController = async (req, res) => {
 
     res.cookie('token', tkn, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -183,8 +183,8 @@ const loginController = async (req, res) => {
 
     res.cookie('token', tkn, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -201,9 +201,9 @@ const logoutController = async (req, res) => {
   try {
     res.cookie('token', '', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 0, // expire cookie
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 0,
     });
 
     req.flash('info', 'You have been logged out successfully.');

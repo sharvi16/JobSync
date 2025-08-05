@@ -17,8 +17,7 @@ body {
     background: black;
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    
     flex-direction: column;
     font-family: 'Seoge UI', sans-serif;
     background-repeat: no-repeat;
@@ -57,13 +56,13 @@ body.fade-in {
 .signup-form-container {
     width: 100%;
     max-width: 500px;
-    padding: 30px;
+    padding: 60px;
     background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(25px) saturate(180%);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),inset 0 4px 12px rgba(255, 255, 255, 0.05);
-    margin: 5vh auto;
+    margin: auto;
 }
 
 form {
@@ -77,6 +76,15 @@ form h1 {
     margin-bottom: 5px;
     
 }
+
+form label {
+    display: block;
+    width: 100%;
+    text-align: left; 
+    margin-left: 0; 
+    padding-left: 0; 
+}
+
 
 
 
@@ -262,7 +270,7 @@ button:active {
 }
 
 .signin-link a {
-    color: #a766df;
+    color:#ff6b00;
     text-decoration: none;
     font-weight: 500;
     font-size: 16px;

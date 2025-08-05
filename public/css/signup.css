@@ -9,24 +9,37 @@
 
 html,
 body {
-    overflow: hidden;
+    overflow: auto;
     height: 100%;
 }
 
 body {
-    background: linear-gradient(to top right, #000000 40%, #8e0e0e 70%, #e01e1e 90%);
+    background: black;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-     font-family: 'Seoge UI', sans-serif;
+    font-family: 'Seoge UI', sans-serif;
     background-repeat: no-repeat;
     background-attachment: fixed;
     color: white;
     width: 100vw;
     height: 100vh;
     transition: opacity 1s ease-in-out;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../assets/grad.png') center/cover no-repeat;
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
 }
 
 body.fade-in {
@@ -38,7 +51,7 @@ body.fade-in {
     max-width: 650px;
     padding: 20px;
     margin: auto;
-    
+
 }
 
 .signup-form-container {
@@ -46,11 +59,11 @@ body.fade-in {
     max-width: 500px;
     padding: 30px;
     background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(25px) saturate(180%);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin:5vh auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3),inset 0 4px 12px rgba(255, 255, 255, 0.05);
+    margin: 5vh auto;
 }
 
 form {
@@ -61,9 +74,21 @@ form {
 }
 
 form h1 {
-    margin-bottom: 10px;
-    font-size: 28px;
+    margin-bottom: 5px;
+    
 }
+
+
+
+.signup-form-container .subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin-bottom: 25px;
+    font-weight: 300;
+    font-size: 16px;
+}
+
 
 .social-icons {
     margin: 20px 0;
@@ -90,22 +115,19 @@ form span {
 
 input {
     width: 100%;
-    padding: 12px 15px;
-    margin: 10px 0;
+    padding: 14px 16px;
+    margin: 8px 0;
     background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: 8px;
     color: white;
     font-size: 14px;
 }
-
-
-
 button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #fc002d, #ff6b00);
     color: #ffffff;
     width: 100%;
     text-align: center;
@@ -125,6 +147,59 @@ button {
     overflow: hidden;
 }
 
+.social-btn {
+    flex: 1;
+    text-align: center;
+    min-width: 160px;
+    width: auto;
+    padding: 14px 0 !important;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 700;
+  letter-spacing: 0.7px;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 12px;
+}
+
+
+.social-btn i {
+    font-size: 16px;
+    width: 30px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-btn.google-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+
+}
+
+.social-btn.google-btn i {
+    margin-right: 8px;
+    
+}
+
+.social-btn.otp-btn {
+    background: linear-gradient(135deg, #fc002d, #ff6b00);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    padding: 12px 20px;
+}
+.social-btn.otp-btn i {
+  margin-right: 8px; 
+}
+
+.otp-btn:hover{
+     background: linear-gradient(135deg, #ff6b00, #fc002d);
+    transform: translateY(-2px);
+}
 
 
 button:hover::before {
@@ -132,7 +207,7 @@ button:hover::before {
 }
 
 button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #ff6b00, #fc002d);
     transform: translateY(-2px);
 }
 
@@ -147,7 +222,7 @@ button:active {
     align-items: center;
     text-align: center;
     color: #ccc;
-    margin: 2rem 0 1rem;
+    margin: 1.5rem 0;
     font-size: 14px;
 }
 
@@ -171,9 +246,10 @@ button:active {
 
 .social-login {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 1rem;
     margin-top: 15px;
+    gap: 16px;
 }
 
 
@@ -193,38 +269,84 @@ button:active {
 }
 
 
-/* Responsive Adjustments */
-@media (max-width: 600px) {
+
+@media (max-width: 768px) {
     .container {
         padding: 10px;
-        width: 95%;
+        max-width: 95%;
     }
 
     .signup-form-container {
-        padding: 25px;
+        padding: 25px 20px;
+        margin: 2vh auto;
+        backdrop-filter: blur(20px); 
     }
 
-    input,
-    button,
-    select {
-        padding: 10px 12px;
-    }
-}
-
-@media (max-width: 400px) {
-    body {
-        padding: 10px;
+    form h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
     }
 
-    .signup-form-container {
-        padding: 20px;
+    input, select {
+        padding: 12px 14px !important;
+        margin: 10px 0 !important;
     }
 
-    form {
+    button, .social-btn {
+        padding: 12px 20px !important;
+        font-size: 13px !important;
+    }
+
+    .social-login {
+        flex-direction: column;
         gap: 12px;
     }
 
-    h1 {
-        font-size: 24px !important;
+    .social-btn.google-btn, 
+    .social-btn.otp-btn {
+        width: 100% !important;
+        margin-left: 0 !important;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body::before {
+        opacity: 0.3; 
+    }
+
+    .signup-form-container {
+        padding: 20px 15px;
+        border-radius: 16px;
+    }
+
+    input, select {
+        font-size: 13px !important;
+    }
+
+    .login-divider {
+        margin: 1rem 0;
+    }
+
+    .signin-link {
+        font-size: 13px;
+    }
+
+    .signin-link a {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 375px) {
+    form h1 {
+        font-size: 22px !important;
+    }
+
+    .social-btn span {
+        font-size: 12px !important;
+    }
+
+    .social-btn i {
+        font-size: 14px !important;
     }
 }

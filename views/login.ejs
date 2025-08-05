@@ -98,10 +98,11 @@
     <div class="form-container sign-in">
       <div class="glass-card">
         <form method="POST" action="/login">
-          <h1>Sign In</h1>
+          <h1>Welcome Back</h1>
+          <p class="subtitle"><b>Sign in to JobSync</b></p>
 
-          <input type="email" name="email" placeholder="Enter your Email" required>
-          <input type="password" name="password" placeholder="Enter your Password" required>
+          <input type="email" name="email" placeholder="you@example.com" required>
+          <input type="password" name="password" placeholder="Password" required>
           <a href="#" onclick="showForgotPassword()">Forget Your Password?</a>
           <button type="submit">Sign In</button>
 
@@ -113,6 +114,10 @@
           <button class="social-btn google-btn">
             <i class="fab fa-google"></i>
             <span>Google</span>
+          </button>
+          <button class="social-btn otp-btn">
+            <i class="fas fa-mobile-alt"></i>
+            <span>OTP Login</span>
           </button>
 
 
@@ -132,7 +137,7 @@
         <h2 style="margin-bottom: 1rem; text-align: center;">Reset Password</h2>
 
         <form action="/forgot-password" method="POST">
-          <input type="email" name="email" placeholder="Enter your email" required style="width: 100%; padding: 12px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);
+          <input type="email" name="email" placeholder="you@example.com" required style="width: 100%; padding: 12px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);
                border-radius: 8px; background: rgba(255,255,255,0.1); color: #fff;">
 
           <div style="display: flex; gap: 1rem;">

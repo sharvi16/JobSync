@@ -134,18 +134,9 @@ class JobDashboard {
         searchQuery += ` in ${location.trim()}`;
       }
 
-      
-      const apiKey = window.googleApiKey || '';
-      const engineId = window.googleEngineId || '';
-
-      if (!apiKey || !engineId) {
-        console.warn('Google Custom Search API credentials not configured');
-        this.showSampleJobs();
-        return;
-      }
-
+      // Use the proxy endpoint instead of direct Google API call
       const response = await fetch(
-        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${encodeURIComponent(searchQuery)}&num=10`
+        `/api/google-search?q=${encodeURIComponent(searchQuery)}&num=10`
       );
 
       if (!response.ok) {

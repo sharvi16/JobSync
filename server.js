@@ -159,12 +159,58 @@ app.use('/api/search', searchRouter);
 // === PROXY EXTERNAL API TO BYPASS CORS ===
 app.get('/api/totalusers', async (req, res) => {
   try {
-    const response = await fetch('https://sc.ecombullet.com/api/dashboard/totalusers');
+    const response = await globalThis.fetch('https://sc.ecombullet.com/api/dashboard/totalusers');
     const data = await response.json();
     res.json(data);
   } catch (err) {
     console.error('❌ External API fetch failed:', err);
     res.status(500).json({ error: 'Failed to fetch external data' });
+  }
+});
+
+// Proxy for Google Custom Search API to bypass CORS
+app.get('/api/google-search', async (req, res) => {
+  try {
+    const { q, num = 10, start = 1 } = req.query;
+
+    if (!q) {
+      return res.status(400).json({ error: 'Query parameter "q" is required' });
+    }
+
+    const apiKey = process.env.GOOGLE_CLOUD_SEARCH_API;
+    const engineId = process.env.GOOGLE_SEARCH_ENGINE_API;
+
+    if (!apiKey || !engineId) {
+      return res.status(500).json({ error: 'Google API credentials not configured' });
+    }
+
+    const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${encodeURIComponent(q)}&num=${num}&start=${start}`;
+
+    console.log(`🔍 Proxying Google search for: "${q}"`);
+
+    const response = await globalThis.fetch(url);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Google API Error: ${response.status} ${response.statusText}`);
+      console.error(`Error Details: ${errorText}`);
+      return res.status(response.status).json({
+        error: `Google API Error: ${response.status} ${response.statusText}`,
+        details: errorText,
+      });
+    }
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('Google API returned error:', data.error);
+      return res.status(400).json({ error: data.error });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error('❌ Google search proxy failed:', err);
+    res.status(500).json({ error: 'Failed to proxy Google search request' });
   }
 });
 

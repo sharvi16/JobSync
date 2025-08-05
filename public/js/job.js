@@ -9,8 +9,7 @@ class JobRecommendations {
         this.progressBar = document.querySelector('.progress-bar');
         this.progressContainer = document.querySelector('.progress-bar-container');
         this.recommendationsGrid = document.querySelector('.recommendations-grid');
-        this.apiKey = 'YOUR_JSEARCH_API_KEY'; // Replace with your actual API key
-
+        this.apiKey = 'YOUR_JSEARCH_API_KEY'; 
         this.initializeUpload();
     }
 

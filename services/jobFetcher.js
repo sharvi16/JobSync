@@ -45,32 +45,48 @@ class JobFetcherService {
 
   // Initialize the cron job
   init(runImmediately = false) {
-    console.log('🚀 Initializing Job Fetcher Service...');
+    console.log('Initializing Job Fetcher Service...');
 
-    // Run every day at 2:00 AM
+    // Get cron configuration from environment variables
+    const cronSchedule = process.env.CRON_SCHEDULE || '0 2 * * *';
+    const cronTimezone = process.env.CRON_TIMEZONE || 'Asia/Kolkata';
+
+    // Run according to the configured schedule
     cron.schedule(
-      '0 2 * * *',
+      cronSchedule,
       async () => {
-        console.log('⏰ Cron job triggered - Fetching fresh job listings...');
+        console.log('Cron job triggered - Fetching fresh job listings...');
         await this.fetchAndStoreJobs();
       },
       {
         scheduled: true,
-        timezone: 'Asia/Kolkata',
+        timezone: cronTimezone,
+      }
+    );
+
+    // Schedule a weekly detailed cleanup (Sundays at 3:00 AM)
+    cron.schedule(
+      '0 3 * * 0',
+      async () => {
+        console.log('Weekly cleanup job triggered...');
+        await this.performWeeklyMaintenance();
+      },
+      {
+        scheduled: true,
+        timezone: cronTimezone,
       }
     );
 
     // Only run immediately if explicitly requested
     if (runImmediately) {
-      console.log('🔧 Running initial job fetch...');
+      console.log('Running initial job fetch...');
       this.fetchAndStoreJobs();
     }
 
     console.log('Job Fetcher Service initialized successfully');
-    console.log('Next scheduled run: Daily at 2:00 AM (Asia/Kolkata timezone)');
-    console.log(
-      `Current time: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`
-    );
+    console.log(`Next scheduled run: ${cronSchedule} (${cronTimezone} timezone)`);
+    console.log('Weekly maintenance: Sundays at 3:00 AM');
+    console.log(`Current time: ${new Date().toLocaleString('en-IN', { timeZone: cronTimezone })}`);
   }
 
   // Main function to fetch and store jobs
@@ -84,13 +100,14 @@ class JobFetcherService {
     const startTime = Date.now();
 
     try {
-      console.log('📊 Starting job fetch process...');
+      console.log('Starting job fetch process...');
 
-      // Clear old jobs (older than 7 days)
+      // Clear old jobs (older than configured days)
       await this.cleanupOldJobs();
 
       let totalJobsFetched = 0;
       let totalJobsSaved = 0;
+      let failedCategories = [];
 
       // Fetch jobs for each category
       for (const category of this.jobCategories) {
@@ -103,7 +120,7 @@ class JobFetcherService {
             totalJobsFetched += jobs.length;
             totalJobsSaved += savedCount;
             console.log(
-              `Category ${category}: Fetched ${jobs.length}, Saved ${savedCount} new jobs`
+              `✅ Category ${category}: Fetched ${jobs.length}, Saved ${savedCount} new jobs`
             );
           } else {
             console.log(`No jobs found for category: ${category}`);
@@ -112,18 +129,25 @@ class JobFetcherService {
           // Add delay between API calls to avoid rate limiting
           await this.delay(2000);
         } catch (error) {
-          console.error(`Error fetching jobs for category ${category}:`, error.message);
+          console.error(`❌ Error fetching jobs for category ${category}:`, error.message);
+          failedCategories.push(category);
         }
       }
 
+      // Update metrics
       this.lastRun = new Date();
       const duration = (Date.now() - startTime) / 1000;
 
+      console.log('Job fetch completed!');
       console.log(
-        `Job fetch completed! Total fetched: ${totalJobsFetched}, New jobs saved: ${totalJobsSaved}, Duration: ${duration}s`
+        `Results: Fetched ${totalJobsFetched}, Saved ${totalJobsSaved}, Duration: ${duration}s`
       );
+
+      if (failedCategories.length > 0) {
+        console.log(`Failed categories: ${failedCategories.join(', ')}`);
+      }
     } catch (error) {
-      console.error('Error in job fetching process:', error);
+      console.error('❌ Error in job fetching process:', error);
     } finally {
       this.isRunning = false;
     }
@@ -270,7 +294,6 @@ class JobFetcherService {
     const techJobTypes = ['full-time', 'part-time', 'contract', 'remote'];
 
     const skillsMap = {
-      // Blue Collar Skills
       'construction worker': [
         'Manual Labor',
         'Safety Protocols',
@@ -330,8 +353,6 @@ class JobFetcherService {
       barber: ['Hair Cutting', 'Styling', 'Customer Service', 'Hygiene'],
       tailor: ['Stitching', 'Measurement', 'Pattern Making', 'Customer Service'],
       'laundry worker': ['Washing', 'Ironing', 'Stain Removal', 'Customer Service'],
-
-      // Tech Skills (keeping some)
       'software developer': ['JavaScript', 'Python', 'Java', 'React', 'Node.js', 'SQL'],
       'web developer': ['HTML', 'CSS', 'JavaScript', 'React', 'Vue.js', 'Angular'],
       'data scientist': ['Python', 'R', 'SQL', 'Machine Learning', 'TensorFlow', 'Pandas'],
@@ -347,7 +368,7 @@ class JobFetcherService {
     const jobTypes = isBlueCollar ? blueCollarJobTypes : techJobTypes;
 
     const mockJobs = [];
-    const numJobs = Math.floor(Math.random() * 8) + 3; // 3-10 jobs
+    const numJobs = Math.floor(Math.random() * 8) + 3; 
 
     for (let i = 0; i < numJobs; i++) {
       const company = companies[Math.floor(Math.random() * companies.length)];
@@ -370,7 +391,7 @@ class JobFetcherService {
         company: company,
         location: location,
         description: description,
-        url: `https://example.com/jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
+        url: `https://www.naukri.com//jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
         source: isBlueCollar ? 'Local Agency' : 'TechJobs',
         jobType: jobType,
         skills: selectedSkills,
@@ -384,6 +405,56 @@ class JobFetcherService {
     return mockJobs;
   }
 
+  // Generate wage information for blue collar jobs
+  generateWageInfo(category, jobType) {
+    const wageRanges = {
+      daily: {
+        'construction worker': '₹500-800 per day',
+        'house maid': '₹300-500 per day',
+        'security guard': '₹400-600 per day',
+        'delivery boy': '₹400-700 per day',
+        cook: '₹400-800 per day',
+        painter: '₹600-1000 per day',
+        electrician: '₹800-1200 per day',
+        plumber: '₹700-1100 per day',
+        driver: '₹500-800 per day',
+        gardener: '₹300-500 per day',
+        cleaner: '₹300-500 per day',
+        'warehouse helper': '₹400-600 per day',
+        'factory worker': '₹400-700 per day',
+        carpenter: '₹700-1200 per day',
+        mason: '₹600-1000 per day',
+      },
+      weekly: {
+        'construction worker': '₹3000-5000 per week',
+        'house maid': '₹2000-3500 per week',
+        'security guard': '₹2500-4000 per week',
+        'delivery boy': '₹2500-4500 per week',
+        cook: '₹2500-5000 per week',
+      },
+      contract: {
+        'construction worker': '₹15000-25000 per month',
+        'security guard': '₹12000-20000 per month',
+        cook: '₹12000-25000 per month',
+        driver: '₹15000-25000 per month',
+      },
+    };
+
+    const categoryWages = wageRanges[jobType];
+    if (categoryWages && categoryWages[category]) {
+      return `Salary: ${categoryWages[category]}`;
+    }
+
+    // Default wages based on job type
+    const defaultWages = {
+      daily: '₹400-800 per day',
+      weekly: '₹2500-4500 per week',
+      contract: '₹12000-25000 per month',
+      'part-time': '₹8000-15000 per month',
+    };
+
+    return `Salary: ${defaultWages[jobType] || 'Negotiable'}`;
+  }
 
   // Get job-specific requirements
   getJobSpecificRequirements(category) {
@@ -660,17 +731,39 @@ class JobFetcherService {
   // Clean up old jobs
   async cleanupOldJobs() {
     try {
-      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+      const cleanupDays = parseInt(process.env.JOB_CLEANUP_DAYS) || 7;
+      const cleanupDate = new Date(Date.now() - cleanupDays * 24 * 60 * 60 * 1000);
+
       const result = await Job.deleteMany({
-        fetchedAt: { $lt: sevenDaysAgo },
+        fetchedAt: { $lt: cleanupDate },
         isActive: true,
       });
 
       if (result.deletedCount > 0) {
-        console.log(`🧹 Cleaned up ${result.deletedCount} old job listings`);
+        console.log(
+          `🧹 Cleaned up ${result.deletedCount} old job listings (older than ${cleanupDays} days)`
+        );
       }
     } catch (error) {
       console.error('Error cleaning up old jobs:', error);
+    }
+  }
+
+  // Perform weekly maintenance tasks
+  async performWeeklyMaintenance() {
+    try {
+      console.log('🔧 Starting weekly maintenance...');
+
+      // Remove duplicate jobs and perform basic cleanup
+      await this.cleanupOldJobs();
+
+      // Get basic statistics
+      const totalJobs = await Job.countDocuments({ isActive: true });
+      console.log(`Current active jobs: ${totalJobs}`);
+
+      console.log('Weekly maintenance completed');
+    } catch (error) {
+      console.error('❌ Error during weekly maintenance:', error);
     }
   }
 

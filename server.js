@@ -18,6 +18,7 @@ const authRouter = require('./routes/auth.routes.js');
 const { optionalAuth } = require('./middleware/auth.middleware.js');
 const jobFetcher = require('./services/jobFetcher.js');
 const jobRouter = require('./routes/jobAPI.routes.js');
+const searchRouter = require('./routes/searchAPI.routes.js');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -153,7 +154,7 @@ app.get('/', optionalAuth, (req, res) => {
 // Auth routes from auth.routes.js
 app.use('/', authRouter);
 app.use('/api/jobs', jobRouter);
-
+app.use('/api/search', searchRouter);
 
 // === PROXY EXTERNAL API TO BYPASS CORS ===
 app.get('/api/totalusers', async (req, res) => {
@@ -238,7 +239,20 @@ app.listen(PORT, async () => {
 
   // Initialize job fetcher service after server starts
   try {
-    await jobFetcher.init(false); // Pass false to only schedule cron job, no immediate fetch
+    // Check if database has jobs, if not run initial fetch
+    const jobCount = await Job.countDocuments({ isActive: true });
+    const shouldRunInitialFetch = jobCount < 10; // Run if less than 10 jobs
+
+    console.log(`📊 Current active jobs in database: ${jobCount}`);
+
+    if (shouldRunInitialFetch) {
+      console.log('🔄 Database has few jobs, running initial fetch...');
+      await jobFetcher.init(true); // Pass true to run immediate fetch
+    } else {
+      console.log('✅ Database has sufficient jobs, only scheduling cron job...');
+      await jobFetcher.init(false); // Pass false to only schedule cron job, no immediate fetch
+    }
+
     console.log('Job Fetcher Service started successfully');
   } catch (error) {
     console.error('Failed to start Job Fetcher Service:', error);

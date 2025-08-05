@@ -382,8 +382,6 @@ const dashboardController = async (req, res) => {
     const jobStats = await getJobStats();
 
     res.render('dashboard.ejs', {
-      apiKey: process.env.GOOGLE_CLOUD_SEARCH_API,
-      engineId: process.env.GOOGLE_SEARCH_ENGINE_API,
       jobStats: jobStats,
       user: user,
     });

@@ -1,4 +1,4 @@
-// Job Dashboard Management System
+// Job Dashboard Management System - Google Custom Search API Integration
 class JobDashboard {
   constructor() {
     this.currentJobs = [];
@@ -11,285 +11,29 @@ class JobDashboard {
       search: '',
     };
     this.isLoading = false;
+    this.apiKey = null;
+    this.engineId = null;
     this.init();
   }
 
   async init() {
     try {
-      await this.loadJobStats();
-      await this.loadFilterOptions();
-      await this.loadJobs();
       this.setupEventListeners();
-      this.startAutoRefresh();
+      console.log('JobSync Dashboard initialized with Google Custom Search API integration');
     } catch (error) {
       console.error('Error initializing job dashboard:', error);
       this.showError('Failed to initialize dashboard');
     }
   }
 
-  // Load job statistics for dashboard summary
-  async loadJobStats() {
-    try {
-      const response = await fetch('/api/jobs/status');
-      const data = await response.json();
-
-      if (data.success) {
-        this.updateStatsDisplay(data.data);
-      }
-    } catch (error) {
-      console.error('Error loading job stats:', error);
-    }
-  }
-
-  // Update statistics display
-  updateStatsDisplay(stats) {
-    const statsContainer = document.getElementById('jobStats');
-    if (statsContainer) {
-      statsContainer.innerHTML = `
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Jobs</h3>
-            <span class="stat-number">${stats.totalJobs || 0}</span>
-          </div>
-          <div class="stat-card">
-            <h3>Service Status</h3>
-            <span class="stat-status ${stats.isRunning ? 'running' : 'stopped'}">
-              ${stats.isRunning ? 'Running' : 'Stopped'}
-            </span>
-          </div>
-          <div class="stat-card">
-            <h3>Last Updated</h3>
-            <span class="stat-time">${this.formatDate(stats.lastRun)}</span>
-          </div>
-          <div class="stat-card">
-            <h3>Categories</h3>
-            <span class="stat-number">${stats.categories || 0}</span>
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  // Load filter options (categories, locations)
-  async loadFilterOptions() {
-    try {
-      // Load categories
-      const categoriesResponse = await fetch('/api/jobs/categories');
-      const categoriesData = await categoriesResponse.json();
-
-      // Load locations
-      const locationsResponse = await fetch('/api/jobs/locations');
-      const locationsData = await locationsResponse.json();
-
-      if (categoriesData.success) {
-        this.populateSelect('categoryFilter', categoriesData.data, 'All Categories');
-      }
-
-      if (locationsData.success) {
-        this.populateSelect('locationFilter', locationsData.data, 'All Locations');
-      }
-    } catch (error) {
-      console.error('Error loading filter options:', error);
-    }
-  }
-
-  // Populate select dropdown
-  populateSelect(selectId, options, defaultText) {
-    const select = document.getElementById(selectId);
-    if (select) {
-      select.innerHTML = `<option value="all">${defaultText}</option>`;
-      options.forEach((option) => {
-        const optionElement = document.createElement('option');
-        optionElement.value = option;
-        optionElement.textContent = option;
-        select.appendChild(optionElement);
-      });
-    }
-  }
-
-  // Load jobs with current filters
-  async loadJobs(page = 1) {
-    if (this.isLoading) return;
-
-    this.isLoading = true;
-    this.showLoading(true);
-
-    try {
-      const params = new URLSearchParams({
-        page: page,
-        limit: 20,
-        ...this.filters,
-      });
-
-      // Remove 'all' values
-      ['category', 'location', 'jobType'].forEach((key) => {
-        if (this.filters[key] === 'all') {
-          params.delete(key);
-        }
-      });
-
-      // Remove empty search
-      if (!this.filters.search.trim()) {
-        params.delete('search');
-      }
-
-      const response = await fetch(`/api/jobs?${params}`);
-      const data = await response.json();
-
-      if (data.success) {
-        this.currentJobs = data.data;
-        this.currentPage = data.pagination.page;
-        this.totalPages = data.pagination.pages;
-        this.renderJobs();
-        this.renderPagination();
-      } else {
-        this.showError(data.message || 'Failed to load jobs');
-      }
-    } catch (error) {
-      console.error('Error loading jobs:', error);
-      this.showError('Failed to load jobs');
-    } finally {
-      this.isLoading = false;
-      this.showLoading(false);
-    }
-  }
-
-  // Render jobs list
-  renderJobs() {
-    const jobsContainer = document.getElementById('jobsContainer');
-    if (!jobsContainer) return;
-
-    if (this.currentJobs.length === 0) {
-      jobsContainer.innerHTML = `
-        <div class="no-jobs">
-          <h3>No jobs found</h3>
-          <p>Try adjusting your filters or search terms</p>
-        </div>
-      `;
-      return;
-    }
-
-    const jobsHTML = this.currentJobs.map((job) => this.createJobCard(job)).join('');
-    jobsContainer.innerHTML = jobsHTML;
-  }
-
-  // Create individual job card
-  createJobCard(job) {
-    return `
-      <div class="job-card" data-job-id="${job._id}">
-        <div class="job-header">
-          <h3 class="job-title">${this.escapeHtml(job.title)}</h3>
-          <span class="job-type">${job.jobType}</span>
-        </div>
-        <div class="job-company">
-          <span class="company-name">${this.escapeHtml(job.company)}</span>
-          <span class="job-location">${this.escapeHtml(job.location)}</span>
-        </div>
-        <div class="job-description">
-          ${this.truncateText(this.escapeHtml(job.description), 150)}
-        </div>
-        <div class="job-meta">
-          <div class="job-skills">
-            ${job.skills
-              .slice(0, 3)
-              .map((skill) => `<span class="skill-tag">${this.escapeHtml(skill)}</span>`)
-              .join('')}
-            ${job.skills.length > 3 ? `<span class="skill-more">+${job.skills.length - 3} more</span>` : ''}
-          </div>
-          <div class="job-info">
-            <span class="job-source">${job.source}</span>
-            <span class="job-date">${this.formatDate(job.postedDate)}</span>
-          </div>
-        </div>
-        <div class="job-actions">
-          <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="apply-btn">
-            Apply Now
-          </a>
-          <button class="save-btn" onclick="jobDashboard.saveJob('${job._id}')">
-            Save
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  // Render pagination
-  renderPagination() {
-    const paginationContainer = document.getElementById('pagination');
-    if (!paginationContainer) return;
-
-    if (this.totalPages <= 1) {
-      paginationContainer.innerHTML = '';
-      return;
-    }
-
-    let paginationHTML = '';
-
-    // Previous button
-    if (this.currentPage > 1) {
-      paginationHTML += `<button class="page-btn" onclick="jobDashboard.loadJobs(${this.currentPage - 1})">Previous</button>`;
-    }
-
-    // Page numbers
-    const startPage = Math.max(1, this.currentPage - 2);
-    const endPage = Math.min(this.totalPages, this.currentPage + 2);
-
-    if (startPage > 1) {
-      paginationHTML += `<button class="page-btn" onclick="jobDashboard.loadJobs(1)">1</button>`;
-      if (startPage > 2) {
-        paginationHTML += `<span class="page-ellipsis">...</span>`;
-      }
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      paginationHTML += `<button class="page-btn ${i === this.currentPage ? 'active' : ''}" onclick="jobDashboard.loadJobs(${i})">${i}</button>`;
-    }
-
-    if (endPage < this.totalPages) {
-      if (endPage < this.totalPages - 1) {
-        paginationHTML += `<span class="page-ellipsis">...</span>`;
-      }
-      paginationHTML += `<button class="page-btn" onclick="jobDashboard.loadJobs(${this.totalPages})">${this.totalPages}</button>`;
-    }
-
-    // Next button
-    if (this.currentPage < this.totalPages) {
-      paginationHTML += `<button class="page-btn" onclick="jobDashboard.loadJobs(${this.currentPage + 1})">Next</button>`;
-    }
-
-    paginationContainer.innerHTML = paginationHTML;
-  }
-
   // Setup event listeners
   setupEventListeners() {
-    // Filter change handlers
-    const categoryFilter = document.getElementById('categoryFilter');
-    const locationFilter = document.getElementById('locationFilter');
-    const jobTypeFilter = document.getElementById('jobTypeFilter');
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const manualFetchBtn = document.getElementById('manualFetchBtn');
+    const searchBtn = document.getElementById('btn-search');
+    const searchInput = document.getElementById('search');
+    const locationInput = document.getElementById('location');
 
-    if (categoryFilter) {
-      categoryFilter.addEventListener('change', (e) => {
-        this.filters.category = e.target.value;
-        this.loadJobs(1);
-      });
-    }
-
-    if (locationFilter) {
-      locationFilter.addEventListener('change', (e) => {
-        this.filters.location = e.target.value;
-        this.loadJobs(1);
-      });
-    }
-
-    if (jobTypeFilter) {
-      jobTypeFilter.addEventListener('change', (e) => {
-        this.filters.jobType = e.target.value;
-        this.loadJobs(1);
-      });
+    if (searchBtn) {
+      searchBtn.addEventListener('click', () => this.handleSearch());
     }
 
     if (searchInput) {
@@ -300,71 +44,442 @@ class JobDashboard {
       });
     }
 
-    if (searchBtn) {
-      searchBtn.addEventListener('click', () => this.handleSearch());
+    if (locationInput) {
+      locationInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.handleSearch();
+        }
+      });
     }
 
-    if (refreshBtn) {
-      refreshBtn.addEventListener('click', () => this.refreshData());
-    }
-
-    if (manualFetchBtn) {
-      manualFetchBtn.addEventListener('click', () => this.triggerManualFetch());
-    }
+    // Filter handlers
+    document.querySelectorAll('.filter-pill').forEach((pill) => {
+      pill.addEventListener('click', () => this.handleFilterClick(pill));
+    });
   }
 
-  // Handle search
-  handleSearch() {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-      this.filters.search = searchInput.value.trim();
-      this.loadJobs(1);
+  // Handle search functionality
+  async handleSearch() {
+    const searchInput = document.getElementById('search');
+    const locationInput = document.getElementById('location');
+
+    if (!searchInput || !locationInput) return;
+
+    const searchTerm = searchInput.value.trim() || 'software engineer';
+    const location = locationInput.value.trim();
+
+    this.filters.search = searchTerm;
+    this.filters.location = location;
+
+    await this.searchJobs(searchTerm, location);
+  }
+
+  // Handle filter selection
+  handleFilterClick(filterElement) {
+    const filterType = filterElement.dataset.filter;
+    const filterValue = filterElement.dataset.value;
+
+    // Toggle active state
+    if (filterElement.classList.contains('active')) {
+      filterElement.classList.remove('active');
+      this.filters[filterType] = 'all';
+    } else {
+      // Remove other active filters of the same type
+      document.querySelectorAll(`[data-filter="${filterType}"]`).forEach((el) => {
+        el.classList.remove('active');
+      });
+
+      filterElement.classList.add('active');
+      this.filters[filterType] = filterValue;
     }
+
+    this.applyFilters();
   }
 
-  // Refresh all data
-  async refreshData() {
-    await this.loadJobStats();
-    await this.loadFilterOptions();
-    await this.loadJobs(1);
-    this.showSuccess('Data refreshed successfully');
+  // Apply filters to current search
+  async applyFilters() {
+    const searchTerm = this.filters.search || 'jobs';
+    let enhancedSearchTerm = searchTerm;
+
+    // Enhance search term with filters
+    if (this.filters.category !== 'all') {
+      enhancedSearchTerm = `${this.filters.category} ${searchTerm}`;
+    }
+
+    if (this.filters.jobType !== 'all') {
+      enhancedSearchTerm += ` ${this.filters.jobType}`;
+    }
+
+    if (this.filters.location === 'remote') {
+      enhancedSearchTerm += ' remote';
+    }
+
+    await this.searchJobs(
+      enhancedSearchTerm,
+      this.filters.location === 'all' ? '' : this.filters.location
+    );
   }
 
-  // Trigger manual job fetch
-  async triggerManualFetch() {
+  // Search jobs using Google Custom Search API
+  async searchJobs(searchTerm, location = '') {
+    if (this.isLoading) return;
+
+    this.isLoading = true;
+    this.showLoading(true);
+
     try {
-      const response = await fetch('/api/jobs/fetch', { method: 'POST' });
+      // Build search query
+      let searchQuery = `${searchTerm} jobs`;
+      if (location && location.trim() && location !== 'all') {
+        searchQuery += ` in ${location.trim()}`;
+      }
+
+      
+      const apiKey = window.googleApiKey || '';
+      const engineId = window.googleEngineId || '';
+
+      if (!apiKey || !engineId) {
+        console.warn('Google Custom Search API credentials not configured');
+        this.showSampleJobs();
+        return;
+      }
+
+      const response = await fetch(
+        `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${encodeURIComponent(searchQuery)}&num=10`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
-      if (data.success) {
-        this.showSuccess('Job fetch process started. Results will be available shortly.');
-        // Refresh data after a delay
-        setTimeout(() => this.refreshData(), 5000);
+      if (data.items && data.items.length > 0) {
+        const transformedJobs = this.transformGoogleResults(data.items, location);
+        this.currentJobs = transformedJobs;
+        this.renderJobs();
+        this.showSuccess(`Found ${transformedJobs.length} job opportunities`);
       } else {
-        this.showError(data.message || 'Failed to trigger job fetch');
+        this.currentJobs = [];
+        this.renderJobs();
+        this.showInfo('No jobs found for your search criteria');
       }
     } catch (error) {
-      console.error('Error triggering manual fetch:', error);
-      this.showError('Failed to trigger job fetch');
+      console.error('Error searching jobs:', error);
+      this.showError('Failed to search jobs. Showing sample data.');
+      this.showSampleJobs();
+    } finally {
+      this.isLoading = false;
+      this.showLoading(false);
     }
   }
 
-  // Save job (placeholder - implement as needed)
-  saveJob(jobId) {
-    // Implement job saving functionality
-    console.log('Saving job:', jobId);
-    this.showSuccess('Job saved (feature coming soon)');
+  // Transform Google Custom Search results to job format
+  transformGoogleResults(items, searchLocation) {
+    return items.map((item, index) => {
+      const title = item.title;
+      const company = this.extractCompanyName(item.displayLink, item.snippet);
+      const location = this.extractLocation(item.snippet, searchLocation);
+      const description = item.snippet;
+
+      return {
+        _id: `google_${index}`,
+        title: title,
+        company: company,
+        location: location,
+        description: description,
+        url: item.link,
+        source: item.displayLink || 'Job Board',
+        postedDate: new Date().toISOString(),
+        jobType: 'Not specified',
+        skills: [],
+        category: 'General',
+      };
+    });
   }
 
-  // Start auto-refresh
-  startAutoRefresh() {
-    // Refresh stats every 5 minutes
-    setInterval(
-      () => {
-        this.loadJobStats();
+  // Extract company name from search results
+  extractCompanyName(displayLink, snippet) {
+    if (displayLink) {
+      const domain = displayLink.split('.')[0];
+      const commonJobSites = ['indeed', 'linkedin', 'glassdoor', 'monster', 'naukri', 'shine'];
+      if (!commonJobSites.includes(domain.toLowerCase())) {
+        return domain.charAt(0).toUpperCase() + domain.slice(1);
+      }
+    }
+
+    // Try to extract from snippet
+    const companyPatterns = [
+      /at\s+([A-Z][a-zA-Z\s&]+)/,
+      /join\s+([A-Z][a-zA-Z\s&]+)/,
+      /([A-Z][a-zA-Z\s&]+)\s+is\s+hiring/,
+    ];
+
+    for (const pattern of companyPatterns) {
+      const match = snippet.match(pattern);
+      if (match) {
+        return match[1].trim();
+      }
+    }
+
+    return 'Company';
+  }
+
+  // Extract location from search results
+  extractLocation(snippet, searchLocation) {
+    if (searchLocation && searchLocation.trim() && searchLocation !== 'all') {
+      return searchLocation.trim();
+    }
+
+    // Try to extract location from snippet
+    const locationPatterns = [
+      /in\s+([A-Z][a-zA-Z\s,]+)/,
+      /([A-Z][a-zA-Z\s]+),\s*[A-Z]{2}/,
+      /Remote/i,
+    ];
+
+    for (const pattern of locationPatterns) {
+      const match = snippet.match(pattern);
+      if (match) {
+        return match[1] || match[0];
+      }
+    }
+
+    return 'Location not specified';
+  }
+
+  // Show sample jobs when API is not available
+  showSampleJobs() {
+    this.currentJobs = [
+      {
+        _id: 'sample_1',
+        title: 'Senior Software Engineer',
+        company: 'TechCorp',
+        location: 'San Francisco, CA',
+        description:
+          'Join our team as a Senior Software Engineer. Work on cutting-edge technologies and build scalable applications.',
+        url: '#',
+        source: 'Company Website',
+        jobType: 'Full-time',
+        skills: ['JavaScript', 'React', 'Node.js'],
+        category: 'Engineering',
       },
-      5 * 60 * 1000
-    );
+      {
+        _id: 'sample_2',
+        title: 'Product Manager',
+        company: 'InnovateCo',
+        location: 'New York, NY',
+        description:
+          'Lead product strategy and roadmap for our flagship products. Drive cross-functional collaboration.',
+        url: '#',
+        source: 'LinkedIn',
+        jobType: 'Full-time',
+        skills: ['Product Strategy', 'Analytics', 'Leadership'],
+        category: 'Product',
+      },
+      {
+        _id: 'sample_3',
+        title: 'UX Designer',
+        company: 'DesignStudio',
+        location: 'Remote',
+        description:
+          'Create exceptional user experiences for web and mobile applications. Collaborate with product teams.',
+        url: '#',
+        source: 'Indeed',
+        jobType: 'Contract',
+        skills: ['Figma', 'User Research', 'Prototyping'],
+        category: 'Design',
+      },
+      {
+        _id: 'sample_4',
+        title: 'Data Scientist',
+        company: 'DataTech',
+        location: 'Seattle, WA',
+        description:
+          'Analyze large datasets to drive business insights. Build machine learning models and data pipelines.',
+        url: '#',
+        source: 'Glassdoor',
+        jobType: 'Full-time',
+        skills: ['Python', 'SQL', 'Machine Learning'],
+        category: 'Data Science',
+      },
+      {
+        _id: 'sample_5',
+        title: 'Marketing Manager',
+        company: 'GrowthCo',
+        location: 'Austin, TX',
+        description:
+          'Drive marketing campaigns and growth initiatives. Work with cross-functional teams to achieve business goals.',
+        url: '#',
+        source: 'Monster',
+        jobType: 'Full-time',
+        skills: ['Digital Marketing', 'Analytics', 'Content Strategy'],
+        category: 'Marketing',
+      },
+      {
+        _id: 'sample_6',
+        title: 'DevOps Engineer',
+        company: 'CloudTech',
+        location: 'Remote',
+        description:
+          'Manage cloud infrastructure and deployment pipelines. Ensure system reliability and scalability.',
+        url: '#',
+        source: 'AngelList',
+        jobType: 'Full-time',
+        skills: ['AWS', 'Docker', 'Kubernetes'],
+        category: 'Engineering',
+      },
+      {
+        _id: 'sample_7',
+        title: 'Construction Project Manager',
+        company: 'BuildCorp',
+        location: 'Houston, TX',
+        description:
+          'Oversee construction projects from planning to completion. Coordinate with contractors, suppliers, and clients.',
+        url: '#',
+        source: 'ConstructionJobs',
+        jobType: 'Full-time',
+        skills: ['Project Management', 'Safety Protocols', 'Team Leadership'],
+        category: 'Construction',
+      },
+      {
+        _id: 'sample_8',
+        title: 'Manufacturing Technician',
+        company: 'Industrial Solutions',
+        location: 'Detroit, MI',
+        description:
+          'Operate and maintain manufacturing equipment. Ensure quality control and safety standards.',
+        url: '#',
+        source: 'ManufacturingJobs',
+        jobType: 'Full-time',
+        skills: ['Equipment Operation', 'Quality Control', 'Safety Compliance'],
+        category: 'Manufacturing',
+      },
+      {
+        _id: 'sample_9',
+        title: 'Truck Driver - Long Haul',
+        company: 'TransportPro',
+        location: 'Multiple Locations',
+        description:
+          'Transport goods across states with modern fleet. Excellent benefits and competitive pay.',
+        url: '#',
+        source: 'TruckingJobs',
+        jobType: 'Full-time',
+        skills: ['CDL License', 'Route Planning', 'Vehicle Maintenance'],
+        category: 'Logistics',
+      },
+      {
+        _id: 'sample_10',
+        title: 'Certified Nursing Assistant',
+        company: 'CareFirst Medical',
+        location: 'Phoenix, AZ',
+        description:
+          'Provide compassionate care to patients. Work in a supportive healthcare environment.',
+        url: '#',
+        source: 'HealthcareJobs',
+        jobType: 'Full-time',
+        skills: ['Patient Care', 'Medical Assistance', 'Compassion'],
+        category: 'Healthcare Support',
+      },
+      {
+        _id: 'sample_11',
+        title: 'Retail Store Manager',
+        company: 'ShopSmart',
+        location: 'Miami, FL',
+        description:
+          'Lead retail team to deliver excellent customer service. Manage inventory and daily operations.',
+        url: '#',
+        source: 'RetailCareers',
+        jobType: 'Full-time',
+        skills: ['Customer Service', 'Team Management', 'Inventory Management'],
+        category: 'Retail',
+      },
+      {
+        _id: 'sample_12',
+        title: 'HVAC Technician',
+        company: 'Climate Control Inc',
+        location: 'Las Vegas, NV',
+        description:
+          'Install and repair heating, ventilation, and air conditioning systems. Competitive wages and benefits.',
+        url: '#',
+        source: 'TradeJobs',
+        jobType: 'Full-time',
+        skills: ['HVAC Systems', 'Troubleshooting', 'Customer Service'],
+        category: 'Skilled Trades',
+      },
+    ];
+    this.renderJobs();
+  }
+
+  // Render jobs list
+  renderJobs() {
+    const jobsContainer = document.getElementById('results-container');
+    const jobsCount = document.getElementById('jobs-count');
+
+    if (!jobsContainer || !jobsCount) return;
+
+    if (this.currentJobs.length === 0) {
+      jobsContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <h3>No opportunities found</h3>
+          <p>Try searching with different keywords or adjust your filters</p>
+        </div>
+      `;
+      jobsCount.textContent = 'No opportunities found';
+      return;
+    }
+
+    const jobsHTML = this.currentJobs.map((job) => this.createJobCard(job)).join('');
+    jobsContainer.innerHTML = jobsHTML;
+    jobsCount.textContent = `${this.currentJobs.length} opportunities found`;
+  }
+
+  // Create individual job card (simplified for Google Custom Search API)
+  createJobCard(job) {
+    const tagTypes = ['featured', 'trending', 'urgent', ''];
+    const tagTexts = ['Featured', 'Trending', 'Urgent', 'New'];
+    const randomIndex = Math.floor(Math.random() * tagTypes.length);
+    const tagType = tagTypes[randomIndex];
+    const tagText = tagTexts[randomIndex];
+
+    return `
+      <div class="job-card" data-job-id="${job._id}">
+        <div class="job-header">
+          <div class="job-info">
+            <h3>${this.escapeHtml(job.title)}</h3>
+            <div class="job-company">${this.escapeHtml(job.company)}</div>
+            <div class="job-location">
+              <i class="fas fa-map-marker-alt"></i>
+              ${this.escapeHtml(job.location)}
+            </div>
+          </div>
+          ${tagText ? `<div class="job-tags"><span class="job-tag ${tagType}">${tagText}</span></div>` : ''}
+        </div>
+        
+        <div class="job-description">
+          ${this.truncateText(this.escapeHtml(job.description), 150)}
+        </div>
+        
+        <div class="job-footer">
+          <div class="job-source">
+            <i class="fas fa-external-link-alt"></i>
+            ${this.escapeHtml(job.source)}
+          </div>
+          <a href="${job.url}" target="_blank" rel="noopener noreferrer" class="apply-btn">
+            Apply Now
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  // Show loading state
+  showLoading(show) {
+    const loader = document.getElementById('loading');
+    if (loader) {
+      loader.style.display = show ? 'block' : 'none';
+    }
   }
 
   // Utility functions
@@ -389,13 +504,6 @@ class JobDashboard {
     });
   }
 
-  showLoading(show) {
-    const loader = document.getElementById('jobsLoader');
-    if (loader) {
-      loader.style.display = show ? 'block' : 'none';
-    }
-  }
-
   showError(message) {
     this.showNotification(message, 'error');
   }
@@ -404,11 +512,30 @@ class JobDashboard {
     this.showNotification(message, 'success');
   }
 
+  showInfo(message) {
+    this.showNotification(message, 'info');
+  }
+
   showNotification(message, type) {
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
+
+    // Add styles
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      max-width: 300px;
+      background: ${type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#17a2b8'};
+      animation: slideIn 0.3s ease;
+    `;
 
     // Add to page
     document.body.appendChild(notification);

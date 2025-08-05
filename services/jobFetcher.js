@@ -389,7 +389,7 @@ class JobFetcherService {
         company: company,
         location: location,
         description: description,
-        url: `https://example-jobs.com .com/jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
+        url: `https://example-jobs.com/jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
         source: isBlueCollar ? 'Local Agency' : 'TechJobs',
         jobType: jobType,
         skills: selectedSkills,

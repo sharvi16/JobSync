@@ -181,16 +181,14 @@ class JobFetcherService {
         const query = encodeURIComponent(searchStrategies[i]);
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${query}&num=10`;
 
-        console.log(`API URL (Strategy ${i + 1}): ${url.replace(apiKey, 'HIDDEN_KEY')}`);
-
         const response = await fetch(url);
 
         if (!response.ok) {
           const errorText = await response.text();
           console.error(
-            `❌ API Response Error (Strategy ${i + 1}): ${response.status} ${response.statusText}`
+            `API Response Error (Strategy ${i + 1}): ${response.status} ${response.statusText}`
           );
-          console.error(`❌ Error Details: ${errorText}`);
+          console.error(`Error Details: ${errorText}`);
           continue;
         }
 
@@ -391,7 +389,7 @@ class JobFetcherService {
         company: company,
         location: location,
         description: description,
-        url: `https://www.naukri.com//jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
+        url: `https://example-jobs.com .com/jobs/${company.toLowerCase().replace(/\s+/g, '-')}-${category.replace(/\s+/g, '-')}-${i + 1}`,
         source: isBlueCollar ? 'Local Agency' : 'TechJobs',
         jobType: jobType,
         skills: selectedSkills,

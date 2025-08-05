@@ -247,7 +247,6 @@ router.get('/jobs/external', async (req, res) => {
     const query = encodeURIComponent(searchTerm);
     const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${query}&start=${startIndex}&num=${limit}`;
 
-    console.log(`Making external API call: ${searchTerm}`);
 
     const response = await fetch(url);
 
@@ -357,7 +356,6 @@ async function fetchExternalJobs(searchQuery, location, limit = 10, page = 1) {
   const query = encodeURIComponent(searchTerm);
   const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${query}&start=${startIndex}&num=${limit}`;
 
-  console.log(`Making external API call: ${searchTerm}`);
 
   const response = await fetch(url);
 

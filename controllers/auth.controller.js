@@ -163,6 +163,12 @@ const loginController = async (req, res) => {
       return res.redirect('/login');
     }
 
+    // Check if user has a password (could be null for OAuth users)
+    if (!user.password) {
+      req.flash('error', 'This account does not have a password set. Try logging in with Google.');
+      return res.redirect('/login');
+    }
+    
     const isMatched = await bcrypt.compare(password, user.password);
     console.log('ismatched value: ', isMatched);
     if (!isMatched) {

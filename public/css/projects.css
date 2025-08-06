@@ -81,10 +81,31 @@ section.card {
 
 @media (max-width: 900px) {
   .project {
+    position: static;
+    transform: none;
+    width: 100%;
+    height: auto;
     flex-direction: column;
+    padding: 1em;
+    gap: 1em;
   }
 
-  .project-header h3 {
-    font-size: 24px;
+  .project-copy {
+    flex: none;
+    width: 100%;
+    height: auto;
+    padding-bottom: 6em;
+  }
+
+  .project-img {
+    flex: none;
+    width: 100%;
+    height: auto;
+  }
+
+  .project-cta {
+    position: static;
+    padding: 1em 0 0 0;
   }
 }
+

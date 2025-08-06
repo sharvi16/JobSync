@@ -26,10 +26,6 @@
   width: 85%;
   color: rgba(255, 255, 255, 0.125);
   transition: color 0.3s;
-  font-size: 2rem;
-  line-height: 1.4;
-  overflow-wrap: break-word;  /* clean wrapping */
-  word-break: normal;         /* no mid-word break */
 }
 
 .about-copy {
@@ -39,24 +35,21 @@
 }
 
 @media (max-width: 900px) {
+  .about-copy {
+    width: 100%;
+  }
+
   .about-header {
-    padding: 5em 0;
+    padding: 5em 0 5em 0;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
   }
 
   .about-col h2 {
     width: 100%;
-    font-size: 1.5rem;
-    overflow-wrap: break-word;
-    word-break: normal;
-    margin-bottom: 4rem;
+    font-size: 64px;
   }
 
   .about-copy {
-    width: 100%;
-    padding: 2em 1em 4em 1em;
+    padding: 5em 1em 10em 1em;
   }
 }

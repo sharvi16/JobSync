@@ -186,7 +186,7 @@ app.get('/api/google-search', async (req, res) => {
 
     const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${engineId}&q=${encodeURIComponent(q)}&num=${num}&start=${start}`;
 
-    console.log(`🔍 Proxying Google search for: "${q}"`);
+    console.log(`Proxying Google search for: "${q}"`);
 
     const response = await globalThis.fetch(url);
 
@@ -209,7 +209,7 @@ app.get('/api/google-search', async (req, res) => {
 
     res.json(data);
   } catch (err) {
-    console.error('❌ Google search proxy failed:', err);
+    console.error('Google search proxy failed:', err);
     res.status(500).json({ error: 'Failed to proxy Google search request' });
   }
 });

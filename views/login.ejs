@@ -103,8 +103,12 @@
           <label for="email">Email</label>
           <input type="email" name="email" placeholder="you@example.com" required>
           <label for="password">Password</label>
-          <input type="password" name="password" placeholder="Password" required>
+          <div class="password-wrapper">
+            <input type="password" name="password" placeholder="Password" id="password" required>
+            <i class="fas fa-eye-slash toggle-password"></i>
+          </div>
           <a href="#" onclick="showForgotPassword()">Forget Your Password?</a>
+
           <button type="submit">Sign In</button>
 
         </form>
@@ -182,5 +186,17 @@
       function hideForgotPassword() {
         document.getElementById('forgotPasswordModal').style.display = 'none';
       }
+      document.querySelector('.toggle-password').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const icon = this;
+
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.replace('fa-eye-slash', 'fa-eye');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.replace('fa-eye', 'fa-eye-slash');
+        }
+      });
 
     </script>

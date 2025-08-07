@@ -121,7 +121,10 @@
         <label for="email">Email</label>
         <input type="email" name="email" placeholder="you@example.com" required>
         <label for="password">Password</label>
-        <input type="password" name="password" placeholder="Create a Password" required minlength="6">
+        <div class="password-wrapper">
+          <input type="password" name="password" id="password" placeholder="Create a Password" required minlength="6">
+          <i class="fas fa-eye-slash toggle-password"></i>
+        </div>
         <label for="role">Role</label>
         <select name="role"
           style="width: 100%; padding: 14px 16px; margin: 8px 0 15px; border-radius: 8px; background: rgba(255, 255, 255, 0.1); ">
@@ -138,10 +141,10 @@
           <i class="fab fa-google"></i>
           <span>Google</span>
         </button>
-         <button class="social-btn otp-btn">
-            <i class="fas fa-mobile-alt"></i>
-            <span>OTP Login</span>
-          </button>
+        <button class="social-btn otp-btn">
+          <i class="fas fa-mobile-alt"></i>
+          <span>OTP Login</span>
+        </button>
 
 
       </div>
@@ -160,13 +163,26 @@
       });
     }, 5000);
     const signupLink = document.querySelector('.signin-link a');
-  signupLink.addEventListener('click', function (e) {
-    e.preventDefault();
-    document.body.classList.add('fade-in');
-    setTimeout(() => {
-      window.location.href = this.href;
-    }, 500); // duration matches CSS animation
-  });
+    signupLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.body.classList.add('fade-in');
+      setTimeout(() => {
+        window.location.href = this.href;
+      }, 500); // duration matches CSS animation
+    });
+
+    document.querySelector('.toggle-password').addEventListener('click', function () {
+      const passwordInput = document.getElementById('password');
+      const icon = this;
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      }
+    });
   </script>
 </body>
 

@@ -1,5 +1,9 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+
 const {
+  googleAuthController,
   registerUserController,
   verificationController,
   loginController,
@@ -18,6 +22,12 @@ const {
 } = require('../middleware/auth.middleware.js');
 
 const authRouter = express.Router();
+
+authRouter.get('/auth/google',passport.authenticate('google',{
+  scope: ['email']
+}));
+
+authRouter.get('/auth/google/callback', passport.authenticate('google',{ failureRedirect: '/login' }),googleAuthController);
 
 // Public routes (redirect to dashboard if already authenticated)
 authRouter.get('/login', redirectIfAuthenticated, (req, res) => {

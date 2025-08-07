@@ -19,6 +19,8 @@ const { optionalAuth } = require('./middleware/auth.middleware.js');
 const jobFetcher = require('./services/jobFetcher.js');
 const jobRouter = require('./routes/jobAPI.routes.js');
 const searchRouter = require('./routes/searchAPI.routes.js');
+const passport = require('passport');
+require('./utils/passport.js');
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -50,7 +52,7 @@ main();
 const allowedOrigins = [
   'https://jobsync-new.onrender.com',
   'https://jobsyncc.netlify.app',
-  'http://localhost:3000',
+  'http://localhost:5000',
 ];
 
 // ========== MIDDLEWARE ==========
@@ -93,6 +95,9 @@ app.use(
     },
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Initialize flash middleware
 app.use(flash());

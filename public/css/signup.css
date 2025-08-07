@@ -170,6 +170,10 @@ button {
     border-radius: 12px;
 }
 
+.social-login form {
+  display: flex;
+  flex: 1;
+}
 
 .social-btn i {
     font-size: 16px;

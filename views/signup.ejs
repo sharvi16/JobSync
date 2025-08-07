@@ -113,8 +113,8 @@
                     <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
                     <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
-                <span>or use your email for registration</span> -->
+                </div> -->
+                <!-- <span>or use your email for registration</span> -->
         <p class="subtitle">Get started with JobSync</p>
         <label for="name">Full Name</label>
         <input type="text" name="name" placeholder="John Doe " required>
@@ -137,6 +137,7 @@
         <span>Or continue with</span>
       </div>
       <div class="social-login">
+
         <button onclick="window.location.href='/auth/google'" class="social-btn google-btn">
           <i class="fab fa-google"></i>
           <span>Google</span>
@@ -146,6 +147,15 @@
           <span>OTP Login</span>
         </button>
 
+                <button onclick="window.location.href='/auth/google'" class="social-btn google-btn">
+                  <i class="fab fa-google"></i>
+                  <span>Google</span>
+                </button>
+         <button class="social-btn otp-btn">
+            <i class="fas fa-mobile-alt"></i>
+            <span>OTP Login</span>
+          </button>
+ 
 
       </div>
       <p class="signin-link">Already have an account? <a href="/login">Sign In</a></p>

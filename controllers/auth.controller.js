@@ -9,6 +9,35 @@ const jobFetcher = require('../services/jobFetcher.js');
 
 dotenv.config(); //env
 
+const googleAuthController = async (req, res) => {
+  try {
+    const user = req.user;
+
+    const tkn = jwt.sign(
+      { id: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h',
+      }
+    );
+
+    res.cookie('token', tkn, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    req.flash('success', `Welcome back, ${user.name}!`);
+    res.redirect('/');
+  } catch (error) {
+    console.error('Google Auth Callback Error:', error);
+    req.flash('error', 'Authentication failed. Please try again.');
+    return res.redirect('/login');
+  }
+    
+  }
+
 const registerUserController = async (req, res) => {
   const { name, email, password, role } = req.body;
   try {
@@ -106,8 +135,8 @@ const verificationController = async (req, res) => {
 
     res.cookie('token', tkn, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -134,6 +163,12 @@ const loginController = async (req, res) => {
       return res.redirect('/login');
     }
 
+    // Check if user has a password (could be null for OAuth users)
+    if (!user.password) {
+      req.flash('error', 'This account does not have a password set. Try logging in with Google.');
+      return res.redirect('/login');
+    }
+    
     const isMatched = await bcrypt.compare(password, user.password);
     console.log('ismatched value: ', isMatched);
     if (!isMatched) {
@@ -156,8 +191,8 @@ const loginController = async (req, res) => {
 
     res.cookie('token', tkn, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -174,9 +209,9 @@ const logoutController = async (req, res) => {
   try {
     res.cookie('token', '', {
       httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      maxAge: 0, // expire cookie
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 0,
     });
 
     req.flash('info', 'You have been logged out successfully.');
@@ -435,6 +470,7 @@ async function getJobStats() {
 }
 
 module.exports = {
+  googleAuthController,
   registerUserController,
   verificationController,
   loginController,

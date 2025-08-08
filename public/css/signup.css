@@ -57,7 +57,7 @@ body.fade-in {
     width: 100%;
     max-width: 500px;
     padding: 60px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(25px) saturate(180%);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -170,6 +170,10 @@ button {
     border-radius: 12px;
 }
 
+.social-login form {
+  display: flex;
+  flex: 1;
+}
 
 .social-btn i {
     font-size: 16px;
@@ -181,6 +185,9 @@ button {
 }
 
 .social-btn.google-btn {
+     background:  #1f1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -195,8 +202,9 @@ button {
 }
 
 .social-btn.otp-btn {
-    background: linear-gradient(135deg, #fc002d, #ff6b00);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background:  #1f1f1f;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
     
     padding: 12px 20px;
 }
@@ -204,8 +212,10 @@ button {
   margin-right: 8px; 
 }
 
-.otp-btn:hover{
-     background: linear-gradient(135deg, #ff6b00, #fc002d);
+.otp-btn:hover,.google-btn:hover{
+     background:  #1f1f1f ;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
     transform: translateY(-2px);
 }
 
@@ -275,6 +285,25 @@ button:active {
     font-weight: 500;
     font-size: 16px;
 }
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+}
+
+.toggle-password:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 
 
 

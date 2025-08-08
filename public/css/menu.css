@@ -1,84 +1,257 @@
-/* menu-container */
-.menu-container {
+.menu-overlay img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.menu-overlay h1 {
+  color: #fff;
+  font-size: 7rem;
+  font-weight: 400;
+  letter-spacing: 1;
+}
+
+.menu-overlay a,
+p {
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 300;
+  user-select: none;
+}
+
+nav {
   position: fixed;
-  top: 46px;
-  left: 0;
-  width: 100%;
-  padding: 1em;
-  display: flex;
-  text-transform: uppercase;
-  z-index: 2;
-  opacity: 0;
-}
-
-.whitespace {
-  pointer-events: none;
-}
-
-.whitespace,
-.menu-items {
-  flex: 1;
-  padding: 0.25em;
-}
-
-.menu-items {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25em;
-  background: var(--color-text);
-  border-radius: 8px;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-  animation: fadeInMenu 0.5s ease-in-out;
-}
-
-@keyframes fadeInMenu {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.menu-item {
-  position: relative;
-  width: 100%;
-  padding: 1em;
+  width: 100vw;
+  padding: 2em;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--color-text-secondary);
-  border-radius: 5px;
-  transition: all 0.3s ease;
+  z-index: 2;
 }
 
-.menu-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+.logo a {
+  font-weight: 600;
 }
 
-.menu-item span {
-  color: var(--color-bg);
+.menu-toggle {
+  position: relative;
+  width: 3rem;
+  height: 1.5rem;
+  cursor: pointer;
+}
+
+.menu-toggle p {
+  transform-origin: top left;
+  will-change: transform, opacity;
+}
+
+.menu-overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100svh;
+  background-image: url(../assets/hero-bg.jpg);
+  z-index: 1;
+  background-position: top left;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.menu-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-origin: bottom left;
+  will-change: transform, opacity;
+  transform: translateX(-100px) translateY(-100px) scale(1.5) rotate(-15deg);
+  opacity: 0.25;
+}
+
+.menu-items .menu-footer {
+  width: 100vw;
+  padding: 2.5rem;
+  display: flex;
+  gap: 2.5em;
+}
+
+.col-lg {
+  flex: 3;
+}
+
+.col-sm {
+  flex: 2;
+}
+
+.menu-items {
+  padding: 2.5em 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5em;
+}
+
+.menu-links,
+.menu-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.link,
+.social {
+  padding-bottom: 6px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.link a,
+.social a {
+  display: inline-block;
+  will-change: transform;
+  transition: color 0.5s;
+  transform: translateY(120%);
+  opacity: 0.25;
+}
+
+.link a {
+  font-size: 3.5rem;
+  letter-spacing: -0.02rem;
+}
+
+.logout-button span {
+  font-size: 3.5rem;
+  letter-spacing: -0.02rem;
+}
+.social a {
+  color: #8f8f8f;
+}
+
+.social a:hover {
+  color: #fff;
+}
+
+.menu-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.menu-footer .col-sm {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  text-align: right;
+}
+
+.link a::after,
+.social a::after,
+.menu-footer a ::after {
+  position: absolute;
+  content: "";
+  top: 102.5%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.6, 0, 0.4, 1);
+}
+
+.link a:hover::after,
+.social a:hover::after,
+.menu-footer a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  transform-origin: right top;
+}
+
+.menu-toggle p#menu-close {
+  opacity: 0;
+  transform: translateX(-5px) translateY(10px) rotate(5deg);
 }
 
 @media (max-width: 900px) {
-  .menu-container {
-    top: unset;
-    bottom: calc(0px);
-    padding: 0;
-  }
-
-  .menu-items {
-    border-radius: 8px 8px 0px 0px;
-    padding-bottom: 100px;
-  }
-
-  .whitespace {
+  .link a::after,
+  .social a::after,
+  .menu-footer a ::after {
     display: none;
   }
+}
+
+.menu-items {
+  padding: 2.5em 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5em;
+}
+
+.logout-form {
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+}
+
+.logout-button {
+  /* Reset button styles */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+
+  /* Match link styles */
+  display: inline-block;
+  font-size: 3.5rem;
+  letter-spacing: -0.02rem;
+  color: #fff;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  position: relative;
+  transition: color 0.5s ease;
+}
+
+.logout-button:hover {
+  color: #ccc;
+}
+
+/* Underline effect for logout button */
+.logout-button::after {
+  position: absolute;
+  content: "";
+  top: 102.5%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.6, 0, 0.4, 1);
+}
+
+.logout-button:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Optional: Add a subtle difference for logout (red tint on hover) */
+.logout-button:hover {
+  color: #ff6b6b;
+}
+
+.logout-button:hover::after {
+  background: #ff6b6b;
 }

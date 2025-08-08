@@ -47,9 +47,7 @@
   <!--Fonts-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 
   <!-- External Libraries -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -169,6 +167,48 @@
       margin-top: 60px;
     }
 
+    /* Menu user items styling */
+    .user-menu-item {
+      background: var(--color-text-secondary) !important;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    .user-menu-item:hover {
+      background: var(--color-text-secondary) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-menu-item {
+      background: var(--color-text-secondary) !important;
+    }
+
+    .logout-menu-item:hover {
+      background: var(--color-text-secondary) !important;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-menu-item span {
+      color: var(--color-bg) !important;
+      font-weight: 500;
+    }
+
+    .user-menu-item i {
+      font-size: 0.9em;
+    }
+
+    /* Menu item numbering for better visual hierarchy */
+    .menu-item span:first-child {
+      font-weight: 700;
+      opacity: 0.7;
+      font-size: 0.8em;
+    }
+
+    .menu-item span:last-child {
+      font-weight: 500;
+    }
+
     @keyframes slideIn {
       from {
         transform: translateX(100%);
@@ -178,6 +218,27 @@
       to {
         transform: translateX(0);
         opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .user-auth {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .user-status {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+
+      .user-menu-item {
+        margin: 0.1rem 0;
+      }
+
+      .user-menu-item span {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -293,55 +354,57 @@
         </div>
 
         <div class="ctas">
-          <div class="menu menu-toggle">
-            <p>Menu</p>
+          <div class="menu">
             <div class="menu-icon">
               <ion-icon name="close-sharp"></ion-icon>
             </div>
+            <p>Menu</p>
           </div>
         </div>
       </nav>
 
       <!-- menu links -->
-      <div class="menu-overlay">
-        <div class="menu-content">
-          <div class="menu-items">
-            <div class="menu-links">
-              <div class="link"><a href="#about">Who we are</a></div>
+      <div class="menu-container">
+        <div class="whitespace"></div>
+        <div class="whitespace"></div>
+        <div class="menu-items">
+          <a href="#about" class="menu-item">
+            <span>01</span>
+            <span>Who we are</span>
+          </a>
+          <% if (typeof user !=='undefined' && user) { %>
+            <!-- Profile - Only for logged in users -->
+            <a href="/profile" class="menu-item user-menu-item">
+              <span>02</span>
+              <span><i class="fa-solid fa-user"></i>&nbsp;&nbsp;Profile</span>
+            </a>
+            <% } %>
+              <a href="#cases" class="menu-item">
+                <span>
+                  <%= (typeof user !=='undefined' && user) ? '03' : '02' %>
+                </span>
+                <span>Features</span>
+              </a>
+              <a href="#prices" class="menu-item">
+                <span>
+                  <%= (typeof user !=='undefined' && user) ? '04' : '03' %>
+                </span>
+                <span>Subscription</span>
+              </a>
               <% if (typeof user !=='undefined' && user) { %>
-              <div class="link"><a href="/profile">Profile</a></div>
-              <% } %>
-              <div class="link"><a href="#cases">Features</a></div>
-              <div class="link"><a href="#prices">Subscription</a></div>
-              <div class="link"><a href="">
-                  <form action="/logout" class="logout-form" method="post">
-                    <button class="menu-item cursor user-menu-item logout-menu-item logout-button">
-                      <span>Logout</span>
-                    </button>
-                  </form>
-                </a></div>
-            </div>
-            <div class="menu-social">
-              <div class="social"><a href="">Instagram</a></div>
-              <div class="social"><a href="">Facebook</a></div>
-              <div class="social"><a href="">Twitter</a></div>
-              <div class="social"><a href="">LinkedIn</a></div>
-            </div>
-          </div>
-          <div class="menu-footer">
-            <div class="col-lg">
-              <p>JobSync</p>
-            </div>
-            <div class="col-sm">
-              <p>+917744556633</p>
-              <p>jobsync@gmail.com</p>
-            </div>
-          </div>
+                <!-- Logout - Only for logged in users -->
+                <form action="/logout" method="post">
+                  <button class="menu-item cursor user-menu-item logout-menu-item">
+                    <span>05</span>
+                    <span><i class="fa-solid fa-right-from-bracket"></i>&nbsp;&nbsp;Logout</span>
+                  </button>
+                </form>
+                <% } %>
         </div>
       </div>
 
+      <!-- website content -->
       <div class="container">
-        <!-- website content -->
         <!-- hero section -->
         <section class="hero" id="hero">
           <div class="hero-img"><img src="./assets/grad.png" alt="" /></div>

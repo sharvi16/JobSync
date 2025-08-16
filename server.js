@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const csrf = require('csurf'); // Add CSRF protection
+const { doubleCsrf } = require('csrf-csrf'); // Modern CSRF protection
 require('dotenv').config();
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
@@ -105,21 +105,32 @@ app.use(passport.session());
 // Initialize flash middleware
 app.use(flash());
 
-// CSRF Protection - Add after session and before routes
-const csrfProtection = csrf({
-  cookie: {
+// Modern CSRF Protection Setup
+const {
+  invalidCsrfTokenError,
+  generateToken,
+  validateRequest,
+  doubleCsrfProtection,
+} = doubleCsrf({
+  getSecret: () => process.env.SESSION_SECRET || 'your-csrf-secret',
+  cookieName: '_csrf',
+  cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
-  }
+    sameSite: 'lax',
+    httpOnly: true,
+  },
+  size: 64,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+  getTokenFromRequest: (req) => req.body._csrf || req.headers['x-csrf-token'],
 });
 
-// Apply CSRF protection to routes that need it (excluding API routes)
+// Apply CSRF protection selectively
 const csrfMiddleware = (req, res, next) => {
-  // Skip CSRF for API routes and GET requests to homepage
-  if (req.path.startsWith('/api/') || (req.method === 'GET' && req.path === '/')) {
+  // Skip CSRF for API routes
+  if (req.path.startsWith('/api/')) {
     return next();
   }
-  return csrfProtection(req, res, next);
+  return doubleCsrfProtection(req, res, next);
 };
 
 app.use(csrfMiddleware);
@@ -130,8 +141,14 @@ app.use((req, res, next) => {
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.info = req.flash('info');
-  // Make CSRF token available to templates
-  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : null;
+  
+  // Generate CSRF token for templates
+  try {
+    res.locals.csrfToken = generateToken(req, res);
+  } catch (error) {
+    res.locals.csrfToken = null;
+  }
+  
   next();
 });
 
@@ -254,7 +271,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-app.post('/send-email', emailRateLimit, csrfProtection, async (req, res) => {
+// Email route with modern CSRF validation
+app.post('/send-email', emailRateLimit, (req, res, next) => {
+  // Validate CSRF token manually for this route
+  try {
+    validateRequest(req);
+    next();
+  } catch (error) {
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Invalid CSRF token.' 
+    });
+  }
+}, async (req, res) => {
   console.log('📩 Incoming form submission:', req.body);
 
   const { user_name, user_role, user_email, portfolio_link, message } = req.body;

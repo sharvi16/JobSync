@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const csrf = require('csurf'); // Add CSRF protection
 require('dotenv').config();
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
@@ -104,12 +105,33 @@ app.use(passport.session());
 // Initialize flash middleware
 app.use(flash());
 
-// Make flash messages available to all views
+// CSRF Protection - Add after session and before routes
+const csrfProtection = csrf({
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  }
+});
+
+// Apply CSRF protection to routes that need it (excluding API routes)
+const csrfMiddleware = (req, res, next) => {
+  // Skip CSRF for API routes and GET requests to homepage
+  if (req.path.startsWith('/api/') || (req.method === 'GET' && req.path === '/')) {
+    return next();
+  }
+  return csrfProtection(req, res, next);
+};
+
+app.use(csrfMiddleware);
+
+// Make flash messages and CSRF token available to all views
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.info = req.flash('info');
+  // Make CSRF token available to templates
+  res.locals.csrfToken = req.csrfToken ? req.csrfToken() : null;
   next();
 });
 
@@ -219,7 +241,7 @@ app.get('/api/google-search', async (req, res) => {
 });
 
 // ========== EMAIL ==========
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: process.env.SMTP_SECURE === 'true',
@@ -232,7 +254,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-app.post('/send-email', emailRateLimit, async (req, res) => {
+app.post('/send-email', emailRateLimit, csrfProtection, async (req, res) => {
   console.log('📩 Incoming form submission:', req.body);
 
   const { user_name, user_role, user_email, portfolio_link, message } = req.body;

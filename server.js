@@ -241,7 +241,7 @@ app.get('/api/google-search', async (req, res) => {
 });
 
 // ========== EMAIL ==========
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
   secure: process.env.SMTP_SECURE === 'true',

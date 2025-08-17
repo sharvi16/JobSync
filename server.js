@@ -178,22 +178,32 @@ app.get('/csrf-token', (req, res) => {
   }
 });
 
-// Test CSRF protection endpoint
-app.post('/test-csrf', csrfProtection, (req, res) => {
-  console.log('🧪 Test CSRF endpoint hit');
-  console.log('🧪 Request headers:', req.headers);
-  console.log('🧪 Request body:', req.body);
-  console.log('🧪 Request cookies:', req.cookies);
-  
-  res.json({ 
-    success: true, 
-    message: 'CSRF protection working!',
-    receivedToken: req.body._csrf,
-    cookieToken: req.cookies._csrf,
-    headers: req.headers,
-    timestamp: new Date().toISOString()
-  });
-});
+        // Test CSRF protection endpoint
+        app.post('/test-csrf', csrfProtection, (req, res) => {
+          console.log('🧪 Test CSRF endpoint hit');
+          console.log('🧪 Request headers:', req.headers);
+          console.log('🧪 Request body:', req.body);
+          console.log('🧪 Request cookies:', req.cookies);
+          
+          res.json({ 
+            success: true, 
+            message: 'CSRF protection working!',
+            receivedToken: req.body._csrf,
+            cookieToken: req.cookies._csrf,
+            headers: req.headers,
+            timestamp: new Date().toISOString()
+          });
+        });
+
+        // Test CSRF protection WITHOUT token (should fail)
+        app.post('/test-csrf-no-token', csrfProtection, (req, res) => {
+          console.log('🧪 Test CSRF NO TOKEN endpoint hit - this should not happen if CSRF protection works');
+          res.json({ 
+            success: false, 
+            message: 'This should not be reachable without CSRF token',
+            timestamp: new Date().toISOString()
+          });
+        });
 
 // === RATE LIMITING ===
 const emailRateLimit = rateLimit({

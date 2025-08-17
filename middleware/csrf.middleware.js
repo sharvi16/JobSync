@@ -61,6 +61,27 @@ const safeGenerateToken = generateToken || ((req, res) => {
   return fallbackToken;
 });
 
+// Create a token store to sync between our custom endpoint and the middleware
+const tokenStore = new Map();
+
+// Clean up expired tokens every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  const expiredTokens = [];
+  
+  for (const [token, data] of tokenStore.entries()) {
+    if (now - data.createdAt > 3600000) { // 1 hour
+      expiredTokens.push(token);
+    }
+  }
+  
+  expiredTokens.forEach(token => tokenStore.delete(token));
+  
+  if (expiredTokens.length > 0) {
+    console.log(`🧹 Cleaned up ${expiredTokens.length} expired CSRF tokens`);
+  }
+}, 5 * 60 * 1000); // 5 minutes
+
 // CSRF protection middleware
 const csrfProtection = (req, res, next) => {
   console.log('🔒 CSRF Protection applied to:', req.path);
@@ -68,22 +89,36 @@ const csrfProtection = (req, res, next) => {
   console.log('🔒 CSRF token in body:', req.body._csrf ? 'PRESENT' : 'MISSING');
   console.log('🔒 CSRF token in cookies:', req.cookies._csrf ? 'PRESENT' : 'MISSING');
   
-  // If doubleCsrfProtection is available, use it
+  // First, try to validate using our custom token system
+  const customToken = req.body._csrf || req.cookies._csrf;
+  console.log('🔍 Custom token found:', customToken ? 'YES' : 'NO');
+  console.log('🔍 Token in store:', customToken ? tokenStore.has(customToken) : 'N/A');
+  console.log('🔍 Total tokens in store:', tokenStore.size);
+  
+  if (customToken && tokenStore.has(customToken)) {
+    console.log('✅ Custom token validation successful');
+    // Remove the token after successful validation (one-time use)
+    tokenStore.delete(customToken);
+    console.log('🔍 Token removed from store, remaining:', tokenStore.size);
+    return next();
+  }
+  
+  // If custom validation fails, fall back to doubleCsrfProtection
   if (typeof doubleCsrfProtection === 'function') {
+    console.log('🔄 Falling back to doubleCsrfProtection');
     return doubleCsrfProtection(req, res, next);
   } else {
-    // Fallback validation
-    console.log('⚠️ Using fallback CSRF validation');
-    const token = req.body._csrf || req.cookies._csrf;
-    if (!token) {
+    // Final fallback validation
+    console.log('⚠️ Using final fallback CSRF validation');
+    if (!customToken) {
       return res.status(403).json({
         success: false,
         message: 'CSRF token missing',
         error: 'CSRF_TOKEN_MISSING'
       });
     }
-    // Simple token validation - in production you'd want more robust validation
-    if (token.length < 10) {
+    // Simple token validation
+    if (customToken.length < 10) {
       return res.status(403).json({
         success: false,
         message: 'Invalid CSRF token',
@@ -161,4 +196,5 @@ module.exports = {
   csrfProtection,
   exposeCsrfToken,
   csrfErrorHandler,
+  tokenStore,
 };

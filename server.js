@@ -108,7 +108,7 @@ app.use(passport.session());
 app.use(flash());
 
 // Import CSRF middleware
-const { csrfProtection, exposeCsrfToken, csrfErrorHandler } = require('./middleware/csrf.middleware.js');
+const { csrfProtection, exposeCsrfToken, csrfErrorHandler, tokenStore } = require('./middleware/csrf.middleware.js');
 
 // Apply CSRF protection selectively
 const csrfMiddleware = (req, res, next) => {
@@ -145,6 +145,13 @@ app.get('/csrf-token', (req, res) => {
     console.log('🔐 Generating CSRF token for request from:', req.get('Origin') || 'Unknown origin');
     console.log('🔐 User agent:', req.get('User-Agent'));
     
+    // Store the token in our token store for validation
+    tokenStore.set(token, {
+      createdAt: Date.now(),
+      origin: req.get('Origin') || 'Unknown',
+      userAgent: req.get('User-Agent')
+    });
+    
     // Set the token in a cookie for the client
     res.cookie('_csrf', token, {
       httpOnly: true,
@@ -154,7 +161,8 @@ app.get('/csrf-token', (req, res) => {
       path: '/'
     });
     
-    console.log('🔐 CSRF token generated and cookie set:', token.substring(0, 20) + '...');
+    console.log('🔐 CSRF token generated, stored, and cookie set:', token.substring(0, 20) + '...');
+    console.log('🔐 Tokens in store:', tokenStore.size);
     
     res.json({ 
       csrfToken: token,

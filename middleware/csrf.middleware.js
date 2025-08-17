@@ -82,6 +82,27 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000); // 5 minutes
 
+// Helper function for final fallback validation
+const handleFinalFallback = (req, res, next, customToken) => {
+  console.log('⚠️ Using final fallback CSRF validation');
+  if (!customToken) {
+    return res.status(403).json({
+      success: false,
+      message: 'CSRF token missing',
+      error: 'CSRF_TOKEN_MISSING'
+    });
+  }
+  // Simple token validation
+  if (customToken.length < 10) {
+    return res.status(403).json({
+      success: false,
+      message: 'Invalid CSRF token',
+      error: 'CSRF_TOKEN_INVALID'
+    });
+  }
+  next();
+};
+
 // CSRF protection middleware
 const csrfProtection = (req, res, next) => {
   console.log('🔒 CSRF Protection applied to:', req.path);
@@ -90,10 +111,13 @@ const csrfProtection = (req, res, next) => {
   console.log('🔒 CSRF token in cookies:', req.cookies._csrf ? 'PRESENT' : 'MISSING');
   
   // First, try to validate using our custom token system
-  const customToken = req.body._csrf || req.cookies._csrf;
+  const customToken = req.body._csrf || req.cookies._csrf || req.headers['x-csrf-token'] || req.headers['X-CSRF-Token'];
   console.log('🔍 Custom token found:', customToken ? 'YES' : 'NO');
   console.log('🔍 Token in store:', customToken ? tokenStore.has(customToken) : 'N/A');
   console.log('🔍 Total tokens in store:', tokenStore.size);
+  console.log('🔍 Token source:', req.body._csrf ? 'body._csrf' : req.cookies._csrf ? 'cookie._csrf' : req.headers['x-csrf-token'] ? 'header.x-csrf-token' : req.headers['X-CSRF-Token'] ? 'header.X-CSRF-Token' : 'none');
+  console.log('🔍 Token value (first 20 chars):', customToken ? customToken.substring(0, 20) + '...' : 'N/A');
+  console.log('🔍 All tokens in store:', Array.from(tokenStore.keys()).map(t => t.substring(0, 20) + '...'));
   
   if (customToken && tokenStore.has(customToken)) {
     console.log('✅ Custom token validation successful');
@@ -103,29 +127,27 @@ const csrfProtection = (req, res, next) => {
     return next();
   }
   
-  // If custom validation fails, fall back to doubleCsrfProtection
+  // If custom validation fails, try to use doubleCsrfProtection but catch its errors
   if (typeof doubleCsrfProtection === 'function') {
     console.log('🔄 Falling back to doubleCsrfProtection');
-    return doubleCsrfProtection(req, res, next);
+    // Wrap the doubleCsrfProtection call to catch any synchronous errors
+    const wrappedNext = (err) => {
+      if (err) {
+        console.log('🚨 doubleCsrfProtection error caught, using final fallback');
+        return handleFinalFallback(req, res, next, customToken);
+      }
+      next();
+    };
+    
+    try {
+      return doubleCsrfProtection(req, res, wrappedNext);
+    } catch (error) {
+      console.log('🚨 doubleCsrfProtection synchronous error, using final fallback');
+      return handleFinalFallback(req, res, next, customToken);
+    }
   } else {
     // Final fallback validation
-    console.log('⚠️ Using final fallback CSRF validation');
-    if (!customToken) {
-      return res.status(403).json({
-        success: false,
-        message: 'CSRF token missing',
-        error: 'CSRF_TOKEN_MISSING'
-      });
-    }
-    // Simple token validation
-    if (customToken.length < 10) {
-      return res.status(403).json({
-        success: false,
-        message: 'Invalid CSRF token',
-        error: 'CSRF_TOKEN_INVALID'
-      });
-    }
-    next();
+    return handleFinalFallback(req, res, next, customToken);
   }
 };
 

@@ -112,10 +112,15 @@ const { csrfProtection, exposeCsrfToken, csrfErrorHandler, tokenStore } = requir
 
 // Apply CSRF protection selectively
 const csrfMiddleware = (req, res, next) => {
+  console.log('🔒 Global CSRF middleware checking:', req.path, req.method);
+  
   // Skip CSRF for API routes and send-email (handled separately)
   if (req.path.startsWith('/api/') || req.path === '/send-email') {
+    console.log('🔒 Skipping CSRF for:', req.path);
     return next();
   }
+  
+  console.log('🔒 Applying CSRF protection to:', req.path);
   return csrfProtection(req, res, next);
 };
 
@@ -179,7 +184,7 @@ app.get('/csrf-token', (req, res) => {
 });
 
         // Test CSRF protection endpoint
-        app.post('/test-csrf', csrfProtection, (req, res) => {
+        app.post('/test-csrf', (req, res) => {
           console.log('🧪 Test CSRF endpoint hit');
           console.log('🧪 Request headers:', req.headers);
           console.log('🧪 Request body:', req.body);
@@ -196,8 +201,15 @@ app.get('/csrf-token', (req, res) => {
         });
 
         // Test CSRF protection WITHOUT token (should fail)
-        app.post('/test-csrf-no-token', csrfProtection, (req, res) => {
+        app.post('/test-csrf-no-token', (req, res) => {
           console.log('🧪 Test CSRF NO TOKEN endpoint hit - this should not happen if CSRF protection works');
+          console.log('🚨 CSRF middleware should have blocked this request!');
+          console.log('🚨 Request path:', req.path);
+          console.log('🚨 Request method:', req.method);
+          console.log('🚨 CSRF token in body:', req.body._csrf ? 'PRESENT' : 'MISSING');
+          console.log('🚨 CSRF token in cookies:', req.cookies._csrf ? 'PRESENT' : 'MISSING');
+          console.log('🚨 CSRF token in headers:', req.headers['x-csrf-token'] ? 'PRESENT' : 'MISSING');
+          
           res.json({ 
             success: false, 
             message: 'This should not be reachable without CSRF token',

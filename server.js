@@ -71,6 +71,8 @@ app.use(
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie'],
   })
 );
 
@@ -140,6 +142,9 @@ app.get('/csrf-token', (req, res) => {
     // Generate a simple but secure CSRF token
     const token = Math.random().toString(36).substring(2) + Date.now().toString(36) + Math.random().toString(36).substring(2);
     
+    console.log('🔐 Generating CSRF token for request from:', req.get('Origin') || 'Unknown origin');
+    console.log('🔐 User agent:', req.get('User-Agent'));
+    
     // Set the token in a cookie for the client
     res.cookie('_csrf', token, {
       httpOnly: true,
@@ -149,9 +154,12 @@ app.get('/csrf-token', (req, res) => {
       path: '/'
     });
     
+    console.log('🔐 CSRF token generated and cookie set:', token.substring(0, 20) + '...');
+    
     res.json({ 
       csrfToken: token,
-      message: 'CSRF token generated successfully'
+      message: 'CSRF token generated successfully',
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('❌ Error generating CSRF token:', error);
@@ -164,11 +172,18 @@ app.get('/csrf-token', (req, res) => {
 
 // Test CSRF protection endpoint
 app.post('/test-csrf', csrfProtection, (req, res) => {
+  console.log('🧪 Test CSRF endpoint hit');
+  console.log('🧪 Request headers:', req.headers);
+  console.log('🧪 Request body:', req.body);
+  console.log('🧪 Request cookies:', req.cookies);
+  
   res.json({ 
     success: true, 
     message: 'CSRF protection working!',
     receivedToken: req.body._csrf,
-    cookieToken: req.cookies._csrf
+    cookieToken: req.cookies._csrf,
+    headers: req.headers,
+    timestamp: new Date().toISOString()
   });
 });
 

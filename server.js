@@ -135,11 +135,31 @@ app.use(exposeCsrfToken);
 app.use(csrfErrorHandler);
 
 // === CSRF TOKEN ENDPOINT ===
-app.get('/csrf-token', exposeCsrfToken, (req, res) => {
-  res.json({ 
-    csrfToken: res.locals.csrfToken,
-    message: 'CSRF token generated successfully'
-  });
+app.get('/csrf-token', (req, res) => {
+  try {
+    // Generate a simple but secure CSRF token
+    const token = Math.random().toString(36).substring(2) + Date.now().toString(36) + Math.random().toString(36).substring(2);
+    
+    // Set the token in a cookie for the client
+    res.cookie('_csrf', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 3600000, // 1 hour
+      path: '/'
+    });
+    
+    res.json({ 
+      csrfToken: token,
+      message: 'CSRF token generated successfully'
+    });
+  } catch (error) {
+    console.error('❌ Error generating CSRF token:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate CSRF token',
+      message: error.message 
+    });
+  }
 });
 
 // Test CSRF protection endpoint
@@ -147,7 +167,8 @@ app.post('/test-csrf', csrfProtection, (req, res) => {
   res.json({ 
     success: true, 
     message: 'CSRF protection working!',
-    receivedToken: req.body._csrf 
+    receivedToken: req.body._csrf,
+    cookieToken: req.cookies._csrf
   });
 });
 

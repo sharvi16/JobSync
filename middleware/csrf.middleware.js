@@ -2,31 +2,63 @@ const { doubleCsrf } = require("csrf-csrf");
 
 // Double CSRF protection configuration
 const doubleCsrfOptions = {
-  getSecret: () => process.env.CSRF_SECRET || "your-secret-key-change-this-in-production",
-  cookieName: "x-csrf-token",
+  getSecret: () => {
+    const secret = process.env.CSRF_SECRET || "your-secret-key-change-this-in-production";
+    console.log('🔐 CSRF Secret used:', secret ? 'SET' : 'NOT_SET');
+    console.log('🔐 Environment:', process.env.NODE_ENV || 'development');
+    if (!process.env.CSRF_SECRET) {
+      console.warn('⚠️ CSRF_SECRET environment variable not set, using fallback secret');
+    }
+    return secret;
+  },
+  cookieName: "_csrf",
   cookieOptions: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 3600000, // 1 hour
+    path: '/',
   },
   size: 64,
   ignoredMethods: ["GET", "HEAD", "OPTIONS"],
   getTokenFromRequest: (req) => {
     // Check multiple possible locations for the token
-    return (
-      req.body._csrf ||
-      req.query._csrf ||
-      req.headers["x-csrf-token"] ||
-      req.headers["x-xsrf-token"]
-    );
+    const token = req.body._csrf || 
+                  req.query._csrf || 
+                  req.headers["x-csrf-token"] || 
+                  req.headers["X-CSRF-Token"] || 
+                  req.headers["x-xsrf-token"];
+    
+    console.log('🔐 Token extracted from request:', token ? 'FOUND' : 'NOT_FOUND');
+    console.log('🔐 Token source:', req.body._csrf ? 'body._csrf' : 
+                               req.query._csrf ? 'query._csrf' : 
+                               req.headers["x-csrf-token"] ? 'header.x-csrf-token' : 
+                               req.headers["X-CSRF-Token"] ? 'header.X-CSRF-Token' : 
+                               req.headers["x-xsrf-token"] ? 'header.x-xsrf-token' : 'none');
+    
+    return token;
   },
 };
 
-const { generateToken, doubleCsrfProtection } = doubleCsrf(doubleCsrfOptions);
+// Extract the functions directly from doubleCsrf
+const {
+  invalidCsrfTokenError,
+  generateToken,
+  doubleCsrfProtection,
+} = doubleCsrf(doubleCsrfOptions);
 
-// CSRF protection middleware (renamed from csrfProtection to match your current usage)
-const csrfProtection = doubleCsrfProtection;
+// Debug: Log what we got
+console.log('🔐 generateToken type:', typeof generateToken);
+console.log('🔐 doubleCsrfProtection type:', typeof doubleCsrfProtection);
+
+// CSRF protection middleware
+const csrfProtection = (req, res, next) => {
+  console.log('🔒 CSRF Protection applied to:', req.path);
+  console.log('🔒 Request method:', req.method);
+  console.log('🔒 CSRF token in body:', req.body._csrf ? 'PRESENT' : 'MISSING');
+  
+  return doubleCsrfProtection(req, res, next);
+};
 
 // Middleware to expose CSRF token to all templates
 const exposeCsrfToken = (req, res, next) => {
@@ -38,9 +70,12 @@ const exposeCsrfToken = (req, res, next) => {
     // Also make it available as a function for compatibility
     req.csrfToken = () => token;
     
+    // Debug logging
+    console.log('🔐 CSRF Token generated for:', req.path);
+    
     next();
   } catch (error) {
-    console.error('Error generating CSRF token:', error);
+    console.error('❌ Error generating CSRF token:', error);
     res.locals.csrfToken = '';
     req.csrfToken = () => '';
     next();
@@ -49,8 +84,12 @@ const exposeCsrfToken = (req, res, next) => {
 
 // CSRF error handler middleware
 const csrfErrorHandler = (err, req, res, next) => {
+  console.log('🚨 Error caught in CSRF handler:', err.message);
+  console.log('🚨 Error type:', err.constructor.name);
+  console.log('🚨 Error stack:', err.stack);
+  
   // Check if this is a CSRF error from csrf-csrf
-  if (err.message && err.message.includes('CSRF')) {
+  if (err.message && (err.message.includes('CSRF') || err.message.includes('invalid csrf token'))) {
     console.log('🚨 CSRF Token Error:', err.message);
 
     // More robust AJAX detection

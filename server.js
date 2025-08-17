@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const { doubleCsrf } = require('csrf-csrf'); // Modern CSRF protection
+
 require('dotenv').config();
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
@@ -105,21 +105,8 @@ app.use(passport.session());
 // Initialize flash middleware
 app.use(flash());
 
-// Modern CSRF Protection Setup
-const { invalidCsrfTokenError, generateToken, validateRequest, doubleCsrfProtection } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET || 'your-csrf-secret-fallback',
-  cookieName: '_csrf',
-  cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    httpOnly: true,
-  },
-  size: 64,
-  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-  getTokenFromRequest: (req) => {
-    return req.body._csrf || req.headers['x-csrf-token'] || req.headers['X-CSRF-Token'];
-  },
-});
+// Import CSRF middleware
+const { csrfProtection, exposeCsrfToken, csrfErrorHandler } = require('./middleware/csrf.middleware.js');
 
 // Apply CSRF protection selectively
 const csrfMiddleware = (req, res, next) => {
@@ -127,26 +114,41 @@ const csrfMiddleware = (req, res, next) => {
   if (req.path.startsWith('/api/') || req.path === '/send-email') {
     return next();
   }
-  return doubleCsrfProtection(req, res, next);
+  return csrfProtection(req, res, next);
 };
 
 app.use(csrfMiddleware);
 
-// Make flash messages and CSRF token available to all views
+// Make flash messages available to all views
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.warning = req.flash('warning');
   res.locals.info = req.flash('info');
-
-  // Generate CSRF token for templates
-  try {
-    res.locals.csrfToken = generateToken(req, res);
-  } catch (error) {
-    res.locals.csrfToken = null;
-  }
-
   next();
+});
+
+// Apply CSRF token exposure middleware
+app.use(exposeCsrfToken);
+
+// Apply CSRF error handler
+app.use(csrfErrorHandler);
+
+// === CSRF TOKEN ENDPOINT ===
+app.get('/csrf-token', exposeCsrfToken, (req, res) => {
+  res.json({ 
+    csrfToken: res.locals.csrfToken,
+    message: 'CSRF token generated successfully'
+  });
+});
+
+// Test CSRF protection endpoint
+app.post('/test-csrf', csrfProtection, (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'CSRF protection working!',
+    receivedToken: req.body._csrf 
+  });
 });
 
 // === RATE LIMITING ===

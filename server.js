@@ -107,6 +107,9 @@ app.use(passport.session());
 // Initialize flash middleware
 app.use(flash());
 
+// Import CSRF middleware
+const { csrfProtection, exposeCsrfToken, csrfErrorHandler, tokenStore } = require('./middleware/csrf.middleware.js');
+
 // Apply CSRF protection selectively
 const csrfMiddleware = (req, res, next) => {
   console.log('🔒 Global CSRF middleware checking:', req.path, req.method);
